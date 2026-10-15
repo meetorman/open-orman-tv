@@ -1,7 +1,7 @@
 # Building a provider
 
-The governing rules for every Orman TV provider. Decided on meetorman/orman-tv#141 (2026-10-14) from
-`docs/provider-contracts.md`, which holds the detail. This page holds only what does not change: a new provider,
+The governing rules for every Orman TV provider, decided 2026-10-14. The contract spec and the schemas hold
+the detail. This page holds only what does not change: a new provider,
 kind, field or subcategory never edits it. If it has to change, the contract changed, and that takes a major
 version (§6) and a decision on an issue.
 
@@ -46,7 +46,7 @@ Every provider obeys these. They change only with a major version.
 
 | Want | Do | Version |
 |---|---|---|
-| A new provider | One class, one declaration. Its group is configuration (#137). | none |
+| A new provider | One class, one declaration. Its group is configuration. | none |
 | A new kind | One line in `<type>.schema.json` under `x-kinds`, plus a shape file when none fits. | none |
 | A new optional field or enum value | Edit the shape file. One changelog line. | none |
 | A new subcategory | Use the slug. The vocabulary is a pattern, not a list. | none |
@@ -60,12 +60,12 @@ value as "no Play".
 
 `reminders`, `storage` and `tvcontrol` are the same family under a second envelope: `provider, type, version,
 generated_at, items, next_cursor`. They share the declaration, the grant and 404 rule, the id rule, the schemas
-and account-deletion purge. They have no `since`, `region` or `ttl`. Each type's verbs are an annex
-(`docs/tv-control-contract.md` §7 and the type's section of the contract), pointed to and never repeated here.
+and account-deletion purge. They have no `since`, `region` or `ttl`. Each type's verbs are an annex in the
+contract spec, pointed to and never repeated here.
 
 ## 5. Build one
 
-1. **Declare.** Subclass `contracts.Provider` in `channel-browser/contracts/<id>.py`. Fill the declaration.
+1. **Declare.** Subclass `contracts.Provider` in `contracts/<id>.py`. Fill the declaration.
 2. **Serve.** One method per declared type, returning contract-shaped items from what the provider already
    holds. Within budget: a page or lookup never waits on a fetch; an on-request fetch is capped and never blocks.
 3. **Identify.** Emit every strong id you have. Without them the merge falls back to title matching.
@@ -102,7 +102,6 @@ The app refuses a newer major and ignores an unknown type.
 
 ## 8. Where the detail lives
 
-- The contract: `docs/provider-contracts.md` (v1).
-- The shapes: `channel-browser/contracts/schemas/<type>.schema.json` and `<type>.<shape>.schema.json`.
-- The SDK: `channel-browser/contracts/__init__.py`. Reference providers: `freemovies.py`, `pdfilms.py`.
-- Groups and grants: #137, orman-apple#68. Boundaries: #114. Open-sourcing: #126.
+- The shapes: `contracts/schemas/<type>.schema.json` and `<type>.<shape>.schema.json`.
+- The SDK: `contracts/__init__.py`. The reference provider: `contracts/pdfilms.py`.
+- The conformance kit: `python3 -m contracts.conform <id>`.

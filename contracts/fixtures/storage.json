@@ -1,0 +1,37 @@
+{
+ "valid": [
+  {
+   "key": "settings/app",
+   "kind": "document",
+   "value": {"widgets_in": "app", "autoplay": true, "home_rows": ["continue", "queue", "trending"]},
+   "version": 3,
+   "created_at": "2026-10-14T18:00:00Z",
+   "updated_at": "2026-10-14T19:30:00Z"
+  },
+  {
+   "key": "controllers/ctl_01JA3K7Q9V",
+   "kind": "document",
+   "value": {"name": "Living room controller", "url": "https://tv.example/live.m3u8"},
+   "version": 1,
+   "created_at": "2026-10-14T18:00:00Z",
+   "updated_at": "2026-10-14T18:00:00Z"
+  },
+  {
+   "key": "settings/app",
+   "kind": "document",
+   "version": 3,
+   "created_at": "2026-10-14T18:00:00Z",
+   "updated_at": "2026-10-14T19:30:00Z"
+  }
+ ],
+ "invalid": [
+  {"why": "no version", "item": {"key": "settings/app", "kind": "document", "value": 1,
+                                 "updated_at": "2026-10-14T19:30:00Z"}},
+  {"why": "version 0", "item": {"key": "settings/app", "kind": "document", "value": 1, "version": 0,
+                                "updated_at": "2026-10-14T19:30:00Z"}},
+  {"why": "a key with an empty segment", "item": {"key": "settings//app", "kind": "document", "value": 1,
+                                                  "version": 1, "updated_at": "2026-10-14T19:30:00Z"}},
+  {"why": "a key starting with /", "item": {"key": "/settings", "kind": "document", "value": 1, "version": 1,
+                                            "updated_at": "2026-10-14T19:30:00Z"}}
+ ]
+}

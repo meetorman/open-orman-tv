@@ -165,6 +165,19 @@ class KitTests(unittest.TestCase):
         self.assertIn("nosuch: fails proof", out.getvalue())
         self.assertEqual(sorted(conform.rigs()), ["pdfilms"])
 
+    def test_providers_outside_the_package_run_by_module_path(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(conform.main(["--all", "--providers", "tests.rigged", "--offline"]), 0)
+        lines = out.getvalue().splitlines()
+        self.assertEqual([l for l in lines if l.startswith(("pdfilms:", "rigged:"))], ["pdfilms: passes", "rigged: passes"])
+        self.assertTrue(any(l.startswith("ok   proof        rigged: rig tests.rigged") for l in lines), lines)
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(conform.main(["tests.test_conform", "--offline"]), 1)
+        self.assertIn("tests.test_conform has no rig", out.getvalue())
+        self.assertEqual(conform.modules(["a.b,c.d", " e.f "]), ["a.b", "c.d", "e.f"])
+
 
 if __name__ == "__main__":
     unittest.main()

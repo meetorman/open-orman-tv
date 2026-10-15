@@ -1,0 +1,35 @@
+{
+ "valid": [
+  {
+   "kind": "controller",
+   "id": "ctl_287ef191b170a0ea",
+   "name": "TV controller (den)",
+   "online": true,
+   "relay": true,
+   "provider": "https://source.example/v1/p/tvcontrol/tvcontrol",
+   "version": "0.2.0",
+   "tvs": [{"id": "tv_9ccffa138b2c", "name": "Den", "capabilities": ["power", "volume.step", "apps.list",
+                                                                    "apps.launch"]}],
+   "registered_at": "2026-10-14T18:00:00Z"
+  },
+  {
+   "kind": "controller",
+   "id": "ctl_0123456789abcdef",
+   "name": "Garage",
+   "online": false,
+   "relay": false,
+   "provider": "https://home.example/v1/p/tvcontrol/tvcontrol",
+   "registered_at": "2026-10-14T18:00:00Z"
+  }
+ ],
+ "invalid": [
+  {"why": "not a controller id", "item": {"kind": "controller", "id": "ctl_x", "name": "a", "online": true,
+                                          "relay": true, "provider": "https://p.example",
+                                          "registered_at": "2026-10-14T18:00:00Z"}},
+  {"why": "no provider", "item": {"kind": "controller", "id": "ctl_0123456789abcdef", "name": "a", "online": true,
+                                  "relay": true, "registered_at": "2026-10-14T18:00:00Z"}},
+  {"why": "online is not a boolean", "item": {"kind": "controller", "id": "ctl_0123456789abcdef", "name": "a",
+                                              "online": "yes", "relay": true, "provider": "https://p.example",
+                                              "registered_at": "2026-10-14T18:00:00Z"}}
+ ]
+}

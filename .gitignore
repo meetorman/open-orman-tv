@@ -4,3 +4,6 @@ __pycache__/
 source.json
 source.db
 source.db-*
+build/
+dist/
+*.egg-info/

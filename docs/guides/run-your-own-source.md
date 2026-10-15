@@ -24,8 +24,9 @@ python3 -m contracts.serve
 python3 -m contracts.conform <id>
 ```
 
-4. **Grant it.** Copy `source.example.json` to `source.json`. Name the source, list the providers to load, and give each
-   member a bearer token and the provider ids they hold. A public provider is in every view; a private one only in the
+4. **Grant it.** Copy `source.example.json` to `source.json`. Name the source, list the providers to load (by id,
+   `contracts/<id>.py`, or by dotted module path, `"my_providers.films"`; `--providers a,b` adds more from the command
+   line), and give each member a bearer token and the provider ids they hold. A public provider is in every view; a private one only in the
    views that name it. No token sees the public providers; a token the file doesn't name is 401.
 
 ```

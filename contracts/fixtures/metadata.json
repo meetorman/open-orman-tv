@@ -1,0 +1,446 @@
+{
+  "valid": [
+    {
+      "id": "freemovies:Q172241",
+      "kind": "movie",
+      "title": "Night of the Living Dead",
+      "year": 1968,
+      "ids": {
+        "wikidata": "Q172241",
+        "imdb": "tt0063350"
+      },
+      "runtime": 5760,
+      "genres": [
+        "horror"
+      ],
+      "certification": {
+        "region": "US",
+        "rating": "NR"
+      },
+      "updated_at": "2026-10-14T07:00:00Z",
+      "cast": [
+        {
+          "name": "Duane Jones",
+          "character": "Ben",
+          "ids": {
+            "wikidata": "Q1265007"
+          }
+        }
+      ],
+      "crew": [
+        {
+          "name": "George A. Romero",
+          "job": "Director"
+        }
+      ],
+      "art": {
+        "poster": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Poster.jpg",
+          "license": "pd",
+          "credit": null
+        }
+      },
+      "popularity": 0.8,
+      "subcategories": [
+        "movies"
+      ]
+    },
+    {
+      "id": "disneyplus:abc",
+      "kind": "series",
+      "title": "Bluey",
+      "release_date": "2019-10-01",
+      "updated_at": "2026-10-14T07:00:00Z",
+      "attribution": {
+        "text": "Data from the service",
+        "display": "item"
+      },
+      "subcategories": [
+        "tv-shows"
+      ]
+    },
+    {
+      "id": "freetv:3001234",
+      "kind": "episode",
+      "title": "The Choice",
+      "series_title": "Frontline",
+      "series_id": "tvmazex:123",
+      "season": 44,
+      "episode": 3,
+      "episode_title": "The Choice",
+      "ids": {
+        "tvmaze_episode": "3001234"
+      },
+      "subcategories": [
+        "episodes",
+        "documentaries"
+      ],
+      "updated_at": "2026-10-14T07:00:00Z"
+    },
+    {
+      "id": "wd:Q172241",
+      "kind": "movie",
+      "title": "Night of the Living Dead",
+      "year": 1968,
+      "ids": {
+        "wikidata": "Q172241",
+        "imdb": "tt0063350"
+      },
+      "runtime": 5760,
+      "genres": [
+        "horror"
+      ],
+      "certification": {
+        "region": "US",
+        "rating": "NR"
+      },
+      "updated_at": "2026-10-14T07:00:00Z",
+      "cast": [
+        {
+          "name": "Duane Jones",
+          "character": "Ben",
+          "ids": {
+            "wikidata": "Q1265007"
+          }
+        }
+      ],
+      "crew": [
+        {
+          "name": "George A. Romero",
+          "job": "Director"
+        }
+      ],
+      "art": {
+        "poster": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Poster.jpg",
+          "license": "pd",
+          "credit": null
+        }
+      },
+      "popularity": 0.8,
+      "subcategories": [
+        "movies"
+      ],
+      "trailers": [
+        {
+          "name": "Official Trailer",
+          "kind": "trailer",
+          "link": "https://www.youtube.com/watch?v=v-PjgYDrg70",
+          "site": "youtube",
+          "language": "en",
+          "official": true,
+          "published": "1995-10-30"
+        }
+      ],
+      "scores": [
+        {
+          "source": "rotten_tomatoes",
+          "value": 96,
+          "scale": 100,
+          "count": 95,
+          "as_of": "2026-10-01"
+        }
+      ],
+      "reviews": [
+        {
+          "outlet": "Example Times",
+          "author": "A. Critic",
+          "excerpt": "Still frightening.",
+          "rating": "4/4",
+          "link": "https://example.com/review",
+          "published": "1968-10-05"
+        }
+      ]
+    },
+    {
+      "id": "espnx:401772900",
+      "kind": "event",
+      "title": "Seahawks at Broncos",
+      "release_date": "2026-10-18",
+      "subcategories": [
+        "sports",
+        "events"
+      ],
+      "updated_at": "2026-10-14T07:00:00Z"
+    },
+    {
+      "id": "freemovies:trending-week",
+      "list": {
+        "name": "Trending this week",
+        "period": "week",
+        "region": "US",
+        "as_of": "2026-10-13"
+      },
+      "updated_at": "2026-10-13T08:00:00Z",
+      "entries": [
+        {
+          "rank": 1,
+          "title_id": "netflixtop:abc",
+          "ids": {
+            "tmdb": "1234"
+          },
+          "title": "A title",
+          "score": 0.97
+        },
+        {
+          "rank": 2,
+          "ids": {
+            "imdb": "tt1"
+          },
+          "title": "Another"
+        }
+      ],
+      "kind": "list"
+    },
+    {
+      "id": "live:hot-now",
+      "list": {
+        "name": "Hot now",
+        "as_of": "2026-10-14T06:40:00Z"
+      },
+      "updated_at": "2026-10-14T07:00:00Z",
+      "entries": [
+        {
+          "rank": 1,
+          "channel_id": "live:espn",
+          "ids": {
+            "call_sign": "ESPN"
+          },
+          "airing_id": null,
+          "score": 0.9
+        }
+      ],
+      "kind": "list"
+    },
+    {
+      "id": "wdchannels:Q48340",
+      "kind": "channel",
+      "name": "CNN",
+      "country": "US",
+      "feed": "east",
+      "ids": {
+        "wikidata": "Q48340",
+        "call_sign": "CNN",
+        "sd": "10142"
+      },
+      "subcategories": [
+        "news",
+        "channels"
+      ],
+      "updated_at": "2026-10-14T07:00:00Z"
+    }
+  ],
+  "invalid": [
+    {
+      "why": "a kind metadata has no shape for (podcast)",
+      "item": {
+        "id": "freemovies:Q1",
+        "kind": "podcast",
+        "title": "T",
+        "year": 2000,
+        "updated_at": "2026-10-14T07:00:00Z"
+      }
+    },
+    {
+      "why": "id without a provider",
+      "item": {
+        "id": "Q1",
+        "kind": "movie",
+        "title": "T",
+        "year": 2000,
+        "updated_at": "2026-10-14T07:00:00Z"
+      }
+    },
+    {
+      "why": "art without a licence",
+      "item": {
+        "id": "freemovies:Q1",
+        "kind": "movie",
+        "title": "T",
+        "year": 2000,
+        "updated_at": "2026-10-14T07:00:00Z",
+        "art": {
+          "poster": {
+            "url": "https://x/p.jpg"
+          }
+        }
+      }
+    },
+    {
+      "why": "art that is a video",
+      "item": {
+        "id": "freemovies:Q1",
+        "kind": "movie",
+        "title": "T",
+        "year": 2000,
+        "updated_at": "2026-10-14T07:00:00Z",
+        "art": {
+          "poster": {
+            "url": "https://x/p.mp4",
+            "license": "pd"
+          }
+        }
+      }
+    },
+    {
+      "why": "updated_at not a time",
+      "item": {
+        "id": "freemovies:Q1",
+        "kind": "movie",
+        "title": "T",
+        "year": 2000,
+        "updated_at": "yesterday"
+      }
+    },
+    {
+      "why": "popularity above 1",
+      "item": {
+        "id": "freemovies:Q1",
+        "kind": "movie",
+        "title": "T",
+        "year": 2000,
+        "updated_at": "2026-10-14T07:00:00Z",
+        "popularity": 3
+      }
+    },
+    {
+      "why": "a trailer file, not a watch page",
+      "item": {
+        "id": "x:1",
+        "kind": "movie",
+        "title": "T",
+        "year": 2000,
+        "updated_at": "2026-10-14T07:00:00Z",
+        "trailers": [
+          {
+            "link": "https://trailers.apple.com/movies/x.m4v",
+            "site": "apple"
+          }
+        ]
+      }
+    },
+    {
+      "why": "a stream",
+      "item": {
+        "id": "x:1",
+        "kind": "movie",
+        "title": "T",
+        "year": 2000,
+        "updated_at": "2026-10-14T07:00:00Z",
+        "trailers": [
+          {
+            "link": "https://cdn.example.com/hls/master.m3u8",
+            "site": "other"
+          }
+        ]
+      }
+    },
+    {
+      "why": "excerpt longer than 300 characters",
+      "item": {
+        "id": "x:1",
+        "kind": "movie",
+        "title": "T",
+        "updated_at": "2026-10-14T07:00:00Z",
+        "reviews": [
+          {
+            "outlet": "X",
+            "link": "https://x/r",
+            "excerpt": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+          }
+        ]
+      }
+    },
+    {
+      "why": "a kind metadata has no shape for",
+      "item": {
+        "id": "x:1",
+        "kind": "airing",
+        "title": "T",
+        "updated_at": "2026-10-14T07:00:00Z"
+      }
+    },
+    {
+      "why": "no kind",
+      "item": {
+        "id": "x:1",
+        "title": "T",
+        "updated_at": "2026-10-14T07:00:00Z"
+      }
+    },
+    {
+      "why": "list: entry without title_id or ids",
+      "item": {
+        "id": "x:l",
+        "list": {
+          "name": "L"
+        },
+        "updated_at": "2026-10-14T07:00:00Z",
+        "entries": [
+          {
+            "rank": 1,
+            "title": "T"
+          }
+        ],
+        "kind": "list"
+      }
+    },
+    {
+      "why": "list: rank 0",
+      "item": {
+        "id": "x:l",
+        "list": {
+          "name": "L"
+        },
+        "updated_at": "2026-10-14T07:00:00Z",
+        "entries": [
+          {
+            "rank": 0,
+            "title": "T",
+            "ids": {
+              "imdb": "tt1"
+            }
+          }
+        ],
+        "kind": "list"
+      }
+    },
+    {
+      "why": "list: entry without channel_id or ids",
+      "item": {
+        "id": "live:hot-now",
+        "list": {
+          "name": "Hot now"
+        },
+        "updated_at": "2026-10-14T07:00:00Z",
+        "entries": [
+          {
+            "rank": 1
+          }
+        ],
+        "kind": "list"
+      }
+    },
+    {
+      "why": "subcategory not a slug",
+      "item": {
+        "id": "x:1",
+        "kind": "movie",
+        "title": "T",
+        "updated_at": "2026-10-14T07:00:00Z",
+        "subcategories": [
+          "Tv Shows!"
+        ]
+      }
+    },
+    {
+      "why": "channel without a country",
+      "item": {
+        "id": "x:cnn",
+        "kind": "channel",
+        "name": "CNN",
+        "updated_at": "2026-10-14T07:00:00Z"
+      }
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "open-orman-tv"
+version = "1.2.0"
+description = "The Orman TV provider contract: SDK, schemas, reference provider, conformance kit and source."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/meetorman/open-orman-tv"
+
+[tool.setuptools]
+packages = ["contracts"]
+
+[tool.setuptools.package-data]
+contracts = ["schemas/*.json", "fixtures/*.json"]

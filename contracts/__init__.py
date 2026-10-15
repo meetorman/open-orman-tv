@@ -263,6 +263,8 @@ def envelope(provider, contract_type, query):
     """The contract's answer for one provider and type (§2)."""
     if provider.store is not None and provider.store.synced(provider.id, contract_type):
         return provider.store.read(provider, contract_type, query)  # indexed SELECTs; the in-memory build below is the fallback
+    if query.since and provider.delta is False:  # declared: no delta is served, whatever the data could tell, and
+        raise Gone("this provider serves no delta; read everything again")  # nothing is built or asked for a 410
     changed = provider.changed_at(contract_type)
     token = sync_token(changed)
     offset = 0
@@ -282,8 +284,6 @@ def envelope(provider, contract_type, query):
         if hit and query.now - hit[0] < reads:
             items, dropped = hit[1], hit[2]
     if query.since:
-        if provider.delta is False:  # declared: no delta is served, whatever the data could tell
-            raise Gone("this provider serves no delta; read everything again")
         since = token_time(query.since)
         if changed is not None and since >= int(changed):
             items = []  # nothing changed since then

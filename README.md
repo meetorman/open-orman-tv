@@ -12,6 +12,7 @@ The Orman TV provider contract, its SDK, and the conformance kit. Run your own p
 | `docs/guides/` | How to build a provider, how to run a source. |
 | `contracts/` | SDK, schemas, reference provider, conformance kit. |
 | `contracts/serve.py` | The reference source: your providers over HTTP, `python3 -m contracts.serve`. |
+| `contracts/store.py` | The store: providers synced into SQLite, indexed reads and real deltas, `python3 -m contracts.store sync <id>`. |
 | `GOVERNANCE.md` | How this repo decides and ships. |
 | `CHANGELOG.md` | One line per change to the contract. |
 

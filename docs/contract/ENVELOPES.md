@@ -20,7 +20,7 @@ items[]   deleted[]  dropped  next_cursor  sync_token
 ```
 
 - `since` = the last `sync_token`: only what changed, plus `deleted`. Too old: **410**, read everything again.
-- `dropped`: items that failed their shape. Conformance fails on any.
+- `dropped`: items that failed their shape, in this read or, from a store, in the latest sync (`STORE.md`). Conformance fails on any.
 - A closed window (an offer that left, an airing that ended) is not served.
 
 ## Member envelope

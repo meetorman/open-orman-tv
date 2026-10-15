@@ -15,6 +15,7 @@
 | `ENVELOPES.md` | The feed envelope, the member envelope, the item rules, the routes. |
 | `VERSIONING.md` | What grows without a bump, what bumps what. |
 | `CONFORMANCE.md` | The definition of done: the checks a provider must pass. |
+| `STORE.md` | The store: sync, indexed reads, what `since` means for a stored provider. |
 
 ## decisions/
 

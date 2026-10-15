@@ -26,6 +26,14 @@ Apache-2.0. See `LICENSE`.
 python3 -m contracts.conform <id>
 ```
 
+The SDK installs as a package too, so a source keeps its providers in its own repository and imports `contracts`
+(pin a tag or commit):
+
+```
+pip install "open-orman-tv @ git+https://github.com/meetorman/open-orman-tv@<ref>"
+python3 -m contracts.conform --providers my_providers.films      # your providers, by module path
+```
+
 Green means the app can read your provider. Red lines say what to fix.
 
 ```

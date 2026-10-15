@@ -1,0 +1,14 @@
+{"valid": [
+  {"id": "slack:mentions", "kind": "widget", "name": "Mentions", "description": "When someone @mentions you.",
+   "template": "toast", "class": "notify", "slots": ["top-right", "bottom-right"], "accent": "purple", "default": "on",
+   "media_hosts": ["avatars.slack-edge.com"], "updated_at": "2026-10-14T00:00:00Z",
+   "sample": {"avatar": "https://avatars.slack-edge.com/sample.png", "title": "Dana in **#release**", "body": "@you can you approve?", "meta": "Slack · now"}},
+  {"id": "slack:channel-ticker", "kind": "widget", "name": "Channel ticker", "description": "Latest messages from channels you pick.",
+   "template": "ticker", "class": "live", "slots": ["top-bar", "lower-third"], "default": "off", "updated_at": "2026-10-14T00:00:00Z",
+   "sample": {"label": "#general", "items": [{"text": "Lunch is here"}, {"text": "Standup moved to 10"}]}}
+],
+ "invalid": [
+  {"why": "an unknown template", "item": {"id": "x:y", "kind": "widget", "name": "Y", "template": "carousel", "class": "live", "sample": {}, "updated_at": "2026-10-14T00:00:00Z"}},
+  {"why": "no class", "item": {"id": "x:y", "kind": "widget", "name": "Y", "template": "toast", "sample": {}, "updated_at": "2026-10-14T00:00:00Z"}},
+  {"why": "a stream in the sample", "item": {"id": "x:y", "kind": "widget", "name": "Y", "template": "pip", "class": "live", "updated_at": "2026-10-14T00:00:00Z", "sample": {"source": {"kind": "hls", "url": "https://x.example/a.m3u8"}}}}
+ ]}

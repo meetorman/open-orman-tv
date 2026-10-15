@@ -1,0 +1,273 @@
+{
+  "valid": [
+    {
+      "id": "disneyplus:abc",
+      "ids": {
+        "tmdb": "862"
+      },
+      "updated_at": "2026-10-14T07:00:00Z",
+      "service": "disneyplus",
+      "service_name": "Disney+",
+      "region": "US",
+      "access": "subscription",
+      "exact": true,
+      "open": {
+        "ios": "https://www.disneyplus.com/browse/entity-1",
+        "tvos": "https://www.disneyplus.com/browse/entity-1"
+      },
+      "app": {
+        "bundle_id": "com.disney.disneyplus",
+        "app_store_id": 1446075923
+      },
+      "kind": "offer",
+      "subcategories": [
+        "movies"
+      ],
+      "window": {
+        "end": "2026-11-01T07:00:00Z",
+        "start": "2026-10-01T07:00:00Z"
+      }
+    },
+    {
+      "id": "freemovies:Q172241",
+      "title_id": "freemovies:Q172241",
+      "updated_at": "2026-10-14T07:00:00Z",
+      "service": "tubi",
+      "service_name": "Tubi",
+      "region": "US",
+      "access": "ads",
+      "kind": "offer",
+      "subcategories": [
+        "movies"
+      ]
+    },
+    {
+      "id": "sd:19574",
+      "name": "KABC",
+      "country": "US",
+      "ids": {
+        "call_sign": "KABC",
+        "sd": "19574"
+      },
+      "feed": "west",
+      "affiliate_of": "ABC",
+      "hd": true,
+      "language": "en",
+      "number": "7.1",
+      "groups": [
+        "Locals"
+      ],
+      "updated_at": "2026-10-14T07:00:00Z",
+      "open": {
+        "ios": "https://abc.com/watch-live"
+      },
+      "kind": "channel",
+      "subcategories": [
+        "channels"
+      ],
+      "channel_id": "wdchannels:Q48340"
+    },
+    {
+      "id": "freetv:pbs",
+      "name": "PBS",
+      "country": "US",
+      "updated_at": "2026-10-14T07:00:00Z",
+      "kind": "channel",
+      "subcategories": [
+        "channels"
+      ],
+      "service": "ota",
+      "service_name": "Over the air",
+      "channel_id": "wdchannels:Q48340"
+    },
+    {
+      "id": "sd:EP012345670123.2026-10-14T03:00Z",
+      "channel_id": "sd:19574",
+      "start": "2026-10-14T03:00:00Z",
+      "end": "2026-10-14T04:00:00Z",
+      "title": "Jimmy Kimmel Live!",
+      "episode_title": "Guests",
+      "season": 24,
+      "episode": 12,
+      "ids": {
+        "gracenote_tms": "EP012345670123",
+        "tvmaze_episode": "3001234"
+      },
+      "series_ids": {
+        "tmdb": "1489"
+      },
+      "new": true,
+      "live": false,
+      "rating": "TV-14",
+      "genres": [
+        "talk"
+      ],
+      "overview": "Late night.",
+      "updated_at": "2026-10-14T07:00:00Z",
+      "kind": "airing",
+      "work_id": "sd:EP012345670123",
+      "subcategories": [
+        "tv-shows"
+      ]
+    }
+  ],
+  "invalid": [
+    {
+      "why": "offer without access",
+      "item": {
+        "id": "x:1",
+        "title_id": "x:1",
+        "updated_at": "2026-10-14T07:00:00Z",
+        "service": "x",
+        "service_name": "X",
+        "region": "US",
+        "kind": "offer"
+      }
+    },
+    {
+      "why": "empty open",
+      "item": {
+        "id": "x:1",
+        "title_id": "x:1",
+        "updated_at": "2026-10-14T07:00:00Z",
+        "service": "x",
+        "service_name": "X",
+        "region": "US",
+        "access": "free",
+        "exact": true,
+        "open": {},
+        "app": {
+          "bundle_id": "b"
+        },
+        "kind": "offer"
+      }
+    },
+    {
+      "why": "open link that is a stream",
+      "item": {
+        "id": "x:1",
+        "title_id": "x:1",
+        "updated_at": "2026-10-14T07:00:00Z",
+        "service": "x",
+        "service_name": "X",
+        "region": "US",
+        "access": "free",
+        "exact": true,
+        "open": {
+          "web": "https://x/live/master.m3u8"
+        },
+        "app": {
+          "bundle_id": "b"
+        },
+        "kind": "offer"
+      }
+    },
+    {
+      "why": "unknown access",
+      "item": {
+        "id": "x:1",
+        "title_id": "x:1",
+        "updated_at": "2026-10-14T07:00:00Z",
+        "service": "x",
+        "service_name": "X",
+        "region": "US",
+        "access": "pirate",
+        "exact": true,
+        "open": {
+          "web": "https://x"
+        },
+        "app": {
+          "bundle_id": "b"
+        },
+        "kind": "offer"
+      }
+    },
+    {
+      "why": "no country",
+      "item": {
+        "id": "freetv:pbs",
+        "name": "PBS",
+        "updated_at": "2026-10-14T07:00:00Z",
+        "kind": "channel"
+      }
+    },
+    {
+      "why": "feed is not east/west/pacific",
+      "item": {
+        "id": "freetv:pbs",
+        "name": "PBS",
+        "country": "US",
+        "feed": "north",
+        "updated_at": "2026-10-14T07:00:00Z",
+        "kind": "channel"
+      }
+    },
+    {
+      "why": "country not two letters",
+      "item": {
+        "id": "freetv:pbs",
+        "name": "PBS",
+        "country": "USA",
+        "updated_at": "2026-10-14T07:00:00Z",
+        "kind": "channel"
+      }
+    },
+    {
+      "why": "no channel_id",
+      "item": {
+        "id": "sd:1",
+        "start": "2026-10-14T07:00:00Z",
+        "end": "2026-10-14T07:00:00Z",
+        "title": "T",
+        "updated_at": "2026-10-14T07:00:00Z",
+        "kind": "airing"
+      }
+    },
+    {
+      "why": "start as epoch, not ISO",
+      "item": {
+        "id": "sd:1",
+        "channel_id": "sd:2",
+        "start": 1791957600,
+        "end": "2026-10-14T07:00:00Z",
+        "title": "T",
+        "updated_at": "2026-10-14T07:00:00Z",
+        "kind": "airing"
+      }
+    },
+    {
+      "why": "offer for no work",
+      "item": {
+        "id": "x:1",
+        "kind": "offer",
+        "updated_at": "2026-10-14T07:00:00Z",
+        "service": "x",
+        "service_name": "X",
+        "region": "US",
+        "access": "free"
+      }
+    },
+    {
+      "why": "a stream in availability",
+      "item": {
+        "id": "x:1",
+        "kind": "channel",
+        "name": "X",
+        "country": "US",
+        "updated_at": "2026-10-14T07:00:00Z",
+        "open": {
+          "web": "https://x/live.m3u8"
+        }
+      }
+    },
+    {
+      "why": "lineup entry naming no channel",
+      "item": {
+        "id": "x:1",
+        "kind": "channel",
+        "name": "CNN",
+        "updated_at": "2026-10-14T07:00:00Z"
+      }
+    }
+  ]
+}

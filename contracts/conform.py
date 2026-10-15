@@ -6,9 +6,13 @@
     python3 -m contracts.conform pdfilms --offline       no network: the HEAD of each stream URL is skipped
     python3 -m contracts.conform pdfilms --url http://127.0.0.1:8080 [--token T] [--other-token T]
                                                          the same checks read over HTTP from a running source
+    python3 -m contracts.conform --providers my_providers.films,my_providers.guide
+                                                         providers kept outside this package, by dotted module path
+                                                         (each module defines `rig`); with --all, alongside the package's own
 
-A provider is run in-process by default: `contracts.<id>.rig(directory, now)` builds it from its fixture
-(`contracts/fixtures/<id>.json`, or the provider's own data) in a scratch directory and returns the provider, or
+A provider is run in-process by default: `contracts.<id>.rig(directory, now)` (or `<module>.rig` for a module named
+by --providers) builds it from its fixture (`contracts/fixtures/<id>.json`, or `fixtures/<id>.json` beside the
+module, or the provider's own data) in a scratch directory and returns the provider, or
 `(provider, change)` where `change()` makes one addition and one removal and returns `{type: (added ids, removed
 ids)}` so the delta check knows what to expect. The kit puts the provider alone on a `contracts.Source`, reads it as
 a member whose view holds it and as one whose view doesn't, and runs the ten checks of the definition of done:
@@ -64,14 +68,16 @@ HEAD_TIMEOUT = 20
 
 
 class Check:
-    def __init__(self, name, problems, detail, skipped=False):
+    def __init__(self, name, problems, detail, skipped=False, pid=None):
         self.name, self.problems, self.detail, self.skipped = name, list(problems), detail, skipped
+        self.pid = pid  # the provider's id, set by Run: a module path's provider is named by what its rig built
 
     @property
     def ok(self):
         return not self.problems
 
-    def line(self, pid):
+    def line(self, pid=None):
+        pid = pid or self.pid
         state = "skip" if self.skipped else "ok" if self.ok else "FAIL"
         text = self.detail if self.ok else "; ".join(self.problems[:4]) + (
             " (+%d more)" % (len(self.problems) - 4) if len(self.problems) > 4 else "")
@@ -90,20 +96,32 @@ def rigs():
     return found
 
 
-def build(pid, directory, now):
-    """(provider, change) from contracts.<pid>.rig; change is None when the rig can't make one."""
-    module = importlib.import_module("contracts." + pid)
+def modules(specs):
+    """The provider modules --providers names: dotted module paths, comma-separated or one flag each."""
+    return [m.strip() for spec in specs or () for m in spec.split(",") if m.strip()]
+
+
+def outside(name):
+    """Whether `name` is a dotted module path (a provider kept outside this package) rather than a provider id."""
+    return "." in name
+
+
+def build(name, directory, now):
+    """(provider, change, module) from the rig of `name`: a provider id (contracts/<id>.py) or a dotted module path
+    (--providers: any module on sys.path that defines rig). change is None when the rig can't make one."""
+    module = importlib.import_module(name if outside(name) else "contracts." + name)
     rig = getattr(module, "rig", None)
     if rig is None:
-        raise LookupError("contracts/%s.py has no rig(directory, now): nothing to run the kit against" % pid)
+        raise LookupError("%s has no rig(directory, now): nothing to run the kit against" % (
+            name if outside(name) else "contracts/%s.py" % name))
     made = rig(directory, now)
     if isinstance(made, tuple):
         provider, change = made
     else:
         provider, change = made, None
-    if provider.id != pid:
-        raise LookupError("contracts.%s.rig built provider %r" % (pid, provider.id))
-    return provider, change
+    if not outside(name) and provider.id != name:
+        raise LookupError("contracts.%s.rig built provider %r" % (name, provider.id))
+    return provider, change, module
 
 
 def head(url):
@@ -184,8 +202,9 @@ def strong_ids(item):
 class Run:
     """One provider under the kit: a Source holding it alone, read with a view that has it and one that doesn't."""
 
-    def __init__(self, pid, provider, change, now, offline=False, budget=5.0, remote=None):
+    def __init__(self, pid, provider, change, now, offline=False, budget=5.0, remote=None, module=None):
         self.pid, self.provider, self.change = pid, provider, change
+        self.module = module  # the provider's module when it is kept outside this package: its proof lives beside it
         self.now, self.offline, self.budget = int(now), offline, budget
         self.remote = remote  # a Remote: read a running source instead of the Source below
         self.source = contracts.Source([provider]) if remote is None else None
@@ -519,12 +538,20 @@ class Run:
     def check_proof(self):
         problems = []
         name = "test_contract_%s.py" % self.pid
-        test = next((d / name for d in (HERE.parent / "tests", HERE.parent) if (d / name).is_file()), HERE.parent / "tests" / name)
-        if not test.is_file():
-            problems.append("no %s in tests/" % name)
-        fixture = FIXTURES / (self.pid + ".json")
-        where = "fixture contracts/fixtures/%s.json" % self.pid if fixture.is_file() else "the rig builds from the provider's own data"
-        return Check("proof", problems, "rig contracts/%s.py, %s, %s" % (self.pid, where, test.name))
+        if self.module is None or self.module.__name__ == "contracts." + self.pid:
+            rig, fixtures = "contracts/%s.py" % self.pid, FIXTURES
+            places = [(d, name) for d in (HERE.parent / "tests", HERE.parent)]
+        else:  # a provider outside the package: its test and fixture live beside its module
+            folder = Path(self.module.__file__).resolve().parent
+            rig, fixtures = self.module.__name__, folder / "fixtures"
+            places = [(folder, name), (folder, "test_contract.py"), (folder / "tests", name), (folder.parent, name)]
+        test = next((d / n for d, n in places if (d / n).is_file()), None)
+        if test is None:
+            problems.append("no %s in tests/ or beside %s" % (name, rig))
+        fixture = fixtures / (self.pid + ".json")
+        where = "fixture %s/%s.json" % ("contracts/fixtures" if fixtures == FIXTURES else "fixtures", self.pid) \
+            if fixture.is_file() else "the rig builds from the provider's own data"
+        return Check("proof", problems, "rig %s, %s, %s" % (rig, where, test.name if test else name))
 
     def run(self):
         """Every check, in the definition of done's order (the delta check, which changes the data, runs last)."""
@@ -537,18 +564,20 @@ class Run:
                 self.checks[name] = check()
             except Exception as error:  # a check that crashes is a failure with the reason, not a crash of the kit
                 self.checks[name] = Check(name, ["the check raised %s: %s" % (type(error).__name__, error)], "")
+        for check in self.checks.values():
+            check.pid = self.pid
         return [self.checks[name] for name in ORDER]
 
 
-def run(pid, offline=False, now=None, budget=5.0):
-    """The checks for one provider: [Check] in the definition of done's order."""
+def run(name, offline=False, now=None, budget=5.0):
+    """The checks for one provider, by id or dotted module path: [Check] in the definition of done's order."""
     now = int(now or time.time())
-    with tempfile.TemporaryDirectory(prefix="conform-%s-" % pid) as directory:
+    with tempfile.TemporaryDirectory(prefix="conform-%s-" % name.rsplit(".", 1)[-1]) as directory:
         try:
-            provider, change = build(pid, directory, now)
+            provider, change, module = build(name, directory, now)
         except (ImportError, LookupError) as error:
-            return [Check("proof", [str(error)], "")]
-        return Run(pid, provider, change, now, offline=offline, budget=budget).run()
+            return [Check("proof", [str(error)], "", pid=name)]
+        return Run(provider.id, provider, change, now, offline=offline, budget=budget, module=module).run()
 
 
 def run_url(pid, url, token=None, other=None, offline=False, budget=5.0):
@@ -563,15 +592,17 @@ def run_url(pid, url, token=None, other=None, offline=False, budget=5.0):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="python3 -m contracts.conform", description="Is this provider on the contract? (docs/contract/PROVIDERS.md §6)")
-    parser.add_argument("provider", nargs="*", help="provider ids (contracts/<id>.py with a rig)")
-    parser.add_argument("--all", action="store_true", help="every provider with a rig")
+    parser.add_argument("provider", nargs="*", help="provider ids (contracts/<id>.py with a rig) or dotted module paths")
+    parser.add_argument("--all", action="store_true", help="every provider with a rig (the package's own, and --providers)")
+    parser.add_argument("--providers", action="append", metavar="MODULE[,MODULE]",
+                        help="providers outside the package: dotted module paths, each defining rig(directory, now)")
     parser.add_argument("--offline", action="store_true", help="skip the HEAD of each stream URL (the only network)")
     parser.add_argument("--budget", type=float, default=5.0, help="seconds a page may take (default 5)")
     parser.add_argument("--url", help="read a running source over HTTP instead of the rig, e.g. http://127.0.0.1:8080")
     parser.add_argument("--token", help="with --url: a bearer token whose view holds the provider")
     parser.add_argument("--other-token", help="with --url: a bearer token whose view doesn't (default: no token)")
     args = parser.parse_args(argv)
-    ids = rigs() if args.all else args.provider
+    ids = (rigs() if args.all else args.provider) + modules(args.providers)
     if args.url and args.all:
         parser.error("--all runs the rigs; with --url name the providers")
     if not ids:
@@ -583,11 +614,11 @@ def main(argv=None):
         else:
             checks = run(pid, offline=args.offline, budget=args.budget)
         for check in checks:
-            print(check.line(pid))
+            print(check.line(check.pid or pid))
         bad = [c.name for c in checks if not c.ok]
         if bad:
             failed.append(pid)
-        print("%s: %s" % (pid, "passes" if not bad else "fails " + ", ".join(bad)))
+        print("%s: %s" % (checks[0].pid or pid, "passes" if not bad else "fails " + ", ".join(bad)))
     return 1 if failed else 0
 
 

@@ -4,8 +4,9 @@
     python3 -m contracts.serve --port 8080 --config source.json
     python3 -m contracts.serve --db source.db               the providers synced into the store first, served from it
 
-`source.json` (see source.example.json) names the source, the providers to load (`contracts/<id>.py`, each a
-`contracts.Provider` subclass built with no arguments) and the members: a bearer token each and the provider ids
+`source.json` (see source.example.json) names the source, the providers to load (by id, `contracts/<id>.py`, or by
+dotted module path, `"my_providers.films"`: any module on sys.path; each declares one `contracts.Provider` subclass,
+built with no arguments; `--providers a,b` on the command line adds more) and the members: a bearer token each and the provider ids
 it holds. `Authorization: Bearer <token>` picks that member's view; no token sees the public providers only; a
 token the file doesn't name is 401. A public provider is in every view. The routes (docs/contract/ENVELOPES.md):
 
@@ -90,14 +91,22 @@ def read_config(path):
     return config
 
 
-def load(pid):
-    """The provider contracts/<pid>.py declares: its contracts.Provider subclass with that id, built with no arguments."""
-    module = importlib.import_module("contracts." + pid)
-    for value in vars(module).values():
-        if isinstance(value, type) and issubclass(value, contracts.Provider) and value is not contracts.Provider \
-                and value.id == pid:
-            return value()
-    raise LookupError("contracts/%s.py declares no contracts.Provider with id %r" % (pid, pid))
+def load(spec):
+    """The provider `spec` names, built with no arguments: a provider id (contracts/<id>.py, the subclass with that id)
+    or a dotted module path (a module anywhere on sys.path, the one contracts.Provider subclass it defines)."""
+    module = importlib.import_module(spec if "." in spec else "contracts." + spec)
+    found = [v for v in vars(module).values()
+             if isinstance(v, type) and issubclass(v, contracts.Provider) and v is not contracts.Provider and v.id]
+    if "." in spec:
+        own = [v for v in found if v.__module__ == module.__name__]  # not the base classes it imports
+        found = own or found
+    else:
+        found = [v for v in found if v.id == spec]
+    if len(found) != 1:
+        raise LookupError("%s declares %s" % (spec if "." in spec else "contracts/%s.py" % spec,
+                                              "no contracts.Provider" if not found else
+                                              "several providers: " + ", ".join(sorted(v.id for v in found))))
+    return found[0]()
 
 
 class App:
@@ -187,10 +196,13 @@ def main(argv=None):
     parser.add_argument("--host", default="0.0.0.0", help="the address to bind (default every interface)")
     parser.add_argument("--port", type=int, default=8080, help="the port (default 8080)")
     parser.add_argument("--db", help="sync the providers into this SQLite store at start and serve them from it")
+    parser.add_argument("--providers", action="append", metavar="MODULE[,MODULE]",
+                        help="more providers, by dotted module path (added to the config's list)")
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
     config = read_config(args.config)
-    providers = [load(pid) for pid in config["providers"]]
+    specs = list(config["providers"]) + [m.strip() for spec in args.providers or () for m in spec.split(",") if m.strip()]
+    providers = [load(spec) for spec in specs]
     store = None
     if args.db:
         from contracts.store import Store

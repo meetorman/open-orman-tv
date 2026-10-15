@@ -1,0 +1,519 @@
+{
+ "valid": [
+  {
+   "id": "pdfilms:Q2062566",
+   "kind": "movie",
+   "title": "Detour",
+   "year": 1945,
+   "ids": {
+    "wikidata": "Q2062566",
+    "imdb": "tt0037638"
+   },
+   "updated_at": "2026-10-14T08:00:00Z",
+   "duration": 4058,
+   "access": "free",
+   "regions": [
+    "US"
+   ],
+   "streams": [
+    {
+     "url": "https://archive.org/download/Detour/Detour.mp4",
+     "format": "mp4",
+     "height": 480,
+     "bytes": 423770341
+    }
+   ],
+   "license": {
+    "code": "pd",
+    "name": "Public domain",
+    "link": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "source": "https://archive.org/details/Detour",
+    "credit": "Internet Archive"
+   },
+   "window": {
+    "start": "2026-10-14T08:00:00Z",
+    "end": null
+   },
+   "how": "play",
+   "subcategories": [
+    "movies"
+   ],
+   "service": "pdfilms"
+  },
+  {
+   "id": "nasa:moon",
+   "kind": "movie",
+   "title": "A short",
+   "year": 1969,
+   "ids": {
+    "wikidata": "Q1"
+   },
+   "updated_at": "2026-10-14T08:00:00Z",
+   "streams": [
+    {
+     "url": "https://example.org/a/master.m3u8",
+     "format": "hls"
+    }
+   ],
+   "license": {
+    "code": "cc-by",
+    "name": "CC BY 4.0",
+    "source": "https://example.org/a"
+   },
+   "window": {
+    "start": "2026-10-01T00:00:00Z",
+    "end": "2026-11-01T00:00:00Z"
+   },
+   "how": "play",
+   "subcategories": [
+    "movies"
+   ],
+   "service": "nasa"
+  }
+ ],
+ "invalid": [
+  {
+   "why": "no ids to pair it with metadata",
+   "item": {
+    "id": "pdfilms:Q2062566",
+    "kind": "movie",
+    "title": "Detour",
+    "year": 1945,
+    "ids": {
+     "tubi": "7950"
+    },
+    "updated_at": "2026-10-14T08:00:00Z",
+    "duration": 4058,
+    "access": "free",
+    "regions": [
+     "US"
+    ],
+    "streams": [
+     {
+      "url": "https://archive.org/download/Detour/Detour.mp4",
+      "format": "mp4",
+      "height": 480,
+      "bytes": 423770341
+     }
+    ],
+    "license": {
+     "code": "pd",
+     "name": "Public domain",
+     "link": "https://creativecommons.org/publicdomain/mark/1.0/",
+     "source": "https://archive.org/details/Detour",
+     "credit": "Internet Archive"
+    },
+    "window": {
+     "end": null
+    },
+    "how": "play",
+    "service": "pdfilms"
+   }
+  },
+  {
+   "why": "no streams",
+   "item": {
+    "id": "pdfilms:Q2062566",
+    "kind": "movie",
+    "title": "Detour",
+    "year": 1945,
+    "ids": {
+     "wikidata": "Q2062566",
+     "imdb": "tt0037638"
+    },
+    "updated_at": "2026-10-14T08:00:00Z",
+    "duration": 4058,
+    "access": "free",
+    "regions": [
+     "US"
+    ],
+    "streams": [],
+    "license": {
+     "code": "pd",
+     "name": "Public domain",
+     "link": "https://creativecommons.org/publicdomain/mark/1.0/",
+     "source": "https://archive.org/details/Detour",
+     "credit": "Internet Archive"
+    },
+    "window": {
+     "end": null
+    },
+    "how": "play",
+    "service": "pdfilms"
+   }
+  },
+  {
+   "why": "a plain-http stream",
+   "item": {
+    "id": "pdfilms:Q2062566",
+    "kind": "movie",
+    "title": "Detour",
+    "year": 1945,
+    "ids": {
+     "wikidata": "Q2062566",
+     "imdb": "tt0037638"
+    },
+    "updated_at": "2026-10-14T08:00:00Z",
+    "duration": 4058,
+    "access": "free",
+    "regions": [
+     "US"
+    ],
+    "streams": [
+     {
+      "url": "http://archive.org/download/Detour/Detour.mp4",
+      "format": "mp4"
+     }
+    ],
+    "license": {
+     "code": "pd",
+     "name": "Public domain",
+     "link": "https://creativecommons.org/publicdomain/mark/1.0/",
+     "source": "https://archive.org/details/Detour",
+     "credit": "Internet Archive"
+    },
+    "window": {
+     "end": null
+    },
+    "how": "play",
+    "service": "pdfilms"
+   }
+  },
+  {
+   "why": "format does not match the url",
+   "item": {
+    "id": "pdfilms:Q2062566",
+    "kind": "movie",
+    "title": "Detour",
+    "year": 1945,
+    "ids": {
+     "wikidata": "Q2062566",
+     "imdb": "tt0037638"
+    },
+    "updated_at": "2026-10-14T08:00:00Z",
+    "duration": 4058,
+    "access": "free",
+    "regions": [
+     "US"
+    ],
+    "streams": [
+     {
+      "url": "https://archive.org/download/Detour/Detour.mp4",
+      "format": "hls"
+     }
+    ],
+    "license": {
+     "code": "pd",
+     "name": "Public domain",
+     "link": "https://creativecommons.org/publicdomain/mark/1.0/",
+     "source": "https://archive.org/details/Detour",
+     "credit": "Internet Archive"
+    },
+    "window": {
+     "end": null
+    },
+    "how": "play",
+    "service": "pdfilms"
+   }
+  },
+  {
+   "why": "no license",
+   "item": {
+    "id": "pdfilms:Q2062566",
+    "kind": "movie",
+    "title": "Detour",
+    "year": 1945,
+    "ids": {
+     "wikidata": "Q2062566",
+     "imdb": "tt0037638"
+    },
+    "updated_at": "2026-10-14T08:00:00Z",
+    "duration": 4058,
+    "access": "free",
+    "regions": [
+     "US"
+    ],
+    "streams": [
+     {
+      "url": "https://archive.org/download/Detour/Detour.mp4",
+      "format": "mp4",
+      "height": 480,
+      "bytes": 423770341
+     }
+    ],
+    "window": {
+     "end": null
+    },
+    "how": "play",
+    "service": "pdfilms"
+   }
+  },
+  {
+   "why": "a license without its source",
+   "item": {
+    "id": "pdfilms:Q2062566",
+    "kind": "movie",
+    "title": "Detour",
+    "year": 1945,
+    "ids": {
+     "wikidata": "Q2062566",
+     "imdb": "tt0037638"
+    },
+    "updated_at": "2026-10-14T08:00:00Z",
+    "duration": 4058,
+    "access": "free",
+    "regions": [
+     "US"
+    ],
+    "streams": [
+     {
+      "url": "https://archive.org/download/Detour/Detour.mp4",
+      "format": "mp4",
+      "height": 480,
+      "bytes": 423770341
+     }
+    ],
+    "license": {
+     "code": "pd",
+     "name": "Public domain"
+    },
+    "window": {
+     "end": null
+    },
+    "how": "play",
+    "service": "pdfilms"
+   }
+  },
+  {
+   "why": "a licence this contract does not admit",
+   "item": {
+    "id": "pdfilms:Q2062566",
+    "kind": "movie",
+    "title": "Detour",
+    "year": 1945,
+    "ids": {
+     "wikidata": "Q2062566",
+     "imdb": "tt0037638"
+    },
+    "updated_at": "2026-10-14T08:00:00Z",
+    "duration": 4058,
+    "access": "free",
+    "regions": [
+     "US"
+    ],
+    "streams": [
+     {
+      "url": "https://archive.org/download/Detour/Detour.mp4",
+      "format": "mp4",
+      "height": 480,
+      "bytes": 423770341
+     }
+    ],
+    "license": {
+     "code": "all-rights-reserved",
+     "name": "x",
+     "source": "https://archive.org/details/Detour"
+    },
+    "window": {
+     "end": null
+    },
+    "how": "play",
+    "service": "pdfilms"
+   }
+  },
+  {
+   "why": "a playable link outside streams",
+   "item": {
+    "id": "pdfilms:Q2062566",
+    "kind": "movie",
+    "title": "Detour",
+    "year": 1945,
+    "ids": {
+     "wikidata": "Q2062566",
+     "imdb": "tt0037638"
+    },
+    "updated_at": "2026-10-14T08:00:00Z",
+    "duration": 4058,
+    "access": "free",
+    "regions": [
+     "US"
+    ],
+    "streams": [
+     {
+      "url": "https://archive.org/download/Detour/Detour.mp4",
+      "format": "mp4",
+      "height": 480,
+      "bytes": 423770341
+     }
+    ],
+    "license": {
+     "code": "pd",
+     "name": "PD",
+     "source": "https://archive.org/download/Detour/Detour.mp4"
+    },
+    "window": {
+     "end": null
+    },
+    "how": "play",
+    "service": "pdfilms"
+   }
+  },
+  {
+   "why": "an access this contract does not admit (rent)",
+   "item": {
+    "id": "pdfilms:Q2062566",
+    "kind": "movie",
+    "title": "Detour",
+    "year": 1945,
+    "ids": {
+     "wikidata": "Q2062566",
+     "imdb": "tt0037638"
+    },
+    "updated_at": "2026-10-14T08:00:00Z",
+    "duration": 4058,
+    "access": "rent",
+    "regions": [
+     "US"
+    ],
+    "streams": [
+     {
+      "url": "https://archive.org/download/Detour/Detour.mp4",
+      "format": "mp4",
+      "height": 480,
+      "bytes": 423770341
+     }
+    ],
+    "license": {
+     "code": "pd",
+     "name": "Public domain",
+     "link": "https://creativecommons.org/publicdomain/mark/1.0/",
+     "source": "https://archive.org/details/Detour",
+     "credit": "Internet Archive"
+    },
+    "window": {
+     "end": null
+    },
+    "how": "play",
+    "service": "pdfilms"
+   }
+  },
+  {
+   "why": "only play-in-app in this draft",
+   "item": {
+    "id": "pdfilms:Q2062566",
+    "kind": "movie",
+    "title": "Detour",
+    "year": 1945,
+    "ids": {
+     "wikidata": "Q2062566",
+     "imdb": "tt0037638"
+    },
+    "updated_at": "2026-10-14T08:00:00Z",
+    "duration": 4058,
+    "access": "free",
+    "regions": [
+     "US"
+    ],
+    "streams": [
+     {
+      "url": "https://archive.org/download/Detour/Detour.mp4",
+      "format": "mp4",
+      "height": 480,
+      "bytes": 423770341
+     }
+    ],
+    "license": {
+     "code": "pd",
+     "name": "Public domain",
+     "link": "https://creativecommons.org/publicdomain/mark/1.0/",
+     "source": "https://archive.org/details/Detour",
+     "credit": "Internet Archive"
+    },
+    "window": {
+     "start": "2026-10-14T08:00:00Z",
+     "end": null
+    },
+    "how": "open",
+    "service": "pdfilms"
+   }
+  },
+  {
+   "why": "no window",
+   "item": {
+    "id": "pdfilms:Q2062566",
+    "kind": "movie",
+    "title": "Detour",
+    "year": 1945,
+    "ids": {
+     "wikidata": "Q2062566",
+     "imdb": "tt0037638"
+    },
+    "updated_at": "2026-10-14T08:00:00Z",
+    "duration": 4058,
+    "access": "free",
+    "regions": [
+     "US"
+    ],
+    "streams": [
+     {
+      "url": "https://archive.org/download/Detour/Detour.mp4",
+      "format": "mp4",
+      "height": 480,
+      "bytes": 423770341
+     }
+    ],
+    "license": {
+     "code": "pd",
+     "name": "Public domain",
+     "link": "https://creativecommons.org/publicdomain/mark/1.0/",
+     "source": "https://archive.org/details/Detour",
+     "credit": "Internet Archive"
+    },
+    "how": "play",
+    "service": "pdfilms"
+   }
+  },
+  {
+   "why": "no service: which availability it delivers",
+   "item": {
+    "id": "pdfilms:Q2062566",
+    "kind": "movie",
+    "title": "Detour",
+    "year": 1945,
+    "ids": {
+     "wikidata": "Q2062566",
+     "imdb": "tt0037638"
+    },
+    "updated_at": "2026-10-14T08:00:00Z",
+    "duration": 4058,
+    "access": "free",
+    "regions": [
+     "US"
+    ],
+    "streams": [
+     {
+      "url": "https://archive.org/download/Detour/Detour.mp4",
+      "format": "mp4",
+      "height": 480,
+      "bytes": 423770341
+     }
+    ],
+    "license": {
+     "code": "pd",
+     "name": "Public domain",
+     "link": "https://creativecommons.org/publicdomain/mark/1.0/",
+     "source": "https://archive.org/details/Detour",
+     "credit": "Internet Archive"
+    },
+    "window": {
+     "start": "2026-10-14T08:00:00Z",
+     "end": null
+    },
+    "how": "play",
+    "subcategories": [
+     "movies"
+    ]
+   }
+  }
+ ]
+}

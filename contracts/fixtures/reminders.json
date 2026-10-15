@@ -1,0 +1,114 @@
+{
+ "valid": [
+  {
+   "id": "reminders:r_01JA3K7Q9V",
+   "kind": "reminder",
+   "program_id": "freetv:show.5734",
+   "airing_id": "freetv:pbs.1792000800",
+   "channel_id": "freetv:pbs",
+   "channel_name": "PBS",
+   "start": "2026-10-15T01:00:00Z",
+   "end": "2026-10-15T02:00:00Z",
+   "lead": 300,
+   "fire_at": "2026-10-15T00:55:00Z",
+   "state": "set",
+   "title": "NOVA",
+   "created_at": "2026-10-14T18:00:00Z",
+   "updated_at": "2026-10-14T18:00:00Z"
+  },
+  {
+   "id": "reminders:r_01JA3K7QAA",
+   "kind": "reminder",
+   "program_id": "freetv:show.5734",
+   "airing_id": "freetv:pbs.1792000800",
+   "channel_id": "freetv:pbs",
+   "channel_name": "PBS",
+   "start": "2026-10-15T01:00:00Z",
+   "end": "2026-10-15T02:00:00Z",
+   "lead": 300,
+   "fire_at": "2026-10-15T00:55:00Z",
+   "state": "fired",
+   "title": "NOVA",
+   "created_at": "2026-10-14T18:00:00Z",
+   "updated_at": "2026-10-15T00:55:00Z",
+   "delivered": "push"
+  }
+ ],
+ "invalid": [
+  {
+   "why": "no program",
+   "item": {
+    "id": "reminders:r_01JA3K7Q9V",
+    "kind": "reminder",
+    "airing_id": "freetv:pbs.1792000800",
+    "channel_id": "freetv:pbs",
+    "channel_name": "PBS",
+    "start": "2026-10-15T01:00:00Z",
+    "end": "2026-10-15T02:00:00Z",
+    "lead": 300,
+    "fire_at": "2026-10-15T00:55:00Z",
+    "state": "set",
+    "title": "NOVA",
+    "created_at": "2026-10-14T18:00:00Z",
+    "updated_at": "2026-10-14T18:00:00Z"
+   }
+  },
+  {
+   "why": "lead over a day",
+   "item": {
+    "id": "reminders:r_01JA3K7Q9V",
+    "kind": "reminder",
+    "program_id": "freetv:show.5734",
+    "airing_id": "freetv:pbs.1792000800",
+    "channel_id": "freetv:pbs",
+    "channel_name": "PBS",
+    "start": "2026-10-15T01:00:00Z",
+    "end": "2026-10-15T02:00:00Z",
+    "lead": 90000,
+    "fire_at": "2026-10-15T00:55:00Z",
+    "state": "set",
+    "title": "NOVA",
+    "created_at": "2026-10-14T18:00:00Z",
+    "updated_at": "2026-10-14T18:00:00Z"
+   }
+  },
+  {
+   "why": "unknown state",
+   "item": {
+    "id": "reminders:r_01JA3K7Q9V",
+    "kind": "reminder",
+    "program_id": "freetv:show.5734",
+    "airing_id": "freetv:pbs.1792000800",
+    "channel_id": "freetv:pbs",
+    "channel_name": "PBS",
+    "start": "2026-10-15T01:00:00Z",
+    "end": "2026-10-15T02:00:00Z",
+    "lead": 300,
+    "fire_at": "2026-10-15T00:55:00Z",
+    "state": "snoozed",
+    "title": "NOVA",
+    "created_at": "2026-10-14T18:00:00Z",
+    "updated_at": "2026-10-14T18:00:00Z"
+   }
+  },
+  {
+   "why": "start not a time",
+   "item": {
+    "id": "reminders:r_01JA3K7Q9V",
+    "kind": "reminder",
+    "program_id": "freetv:show.5734",
+    "airing_id": "freetv:pbs.1792000800",
+    "channel_id": "freetv:pbs",
+    "channel_name": "PBS",
+    "start": "tonight",
+    "end": "2026-10-15T02:00:00Z",
+    "lead": 300,
+    "fire_at": "2026-10-15T00:55:00Z",
+    "state": "set",
+    "title": "NOVA",
+    "created_at": "2026-10-14T18:00:00Z",
+    "updated_at": "2026-10-14T18:00:00Z"
+   }
+  }
+ ]
+}

@@ -67,7 +67,7 @@ def ttl(contract_type):
 
 
 DEFAULT_LIMIT, MAX_LIMIT = 500, 2000
-MEMBER_TYPES = ("reminders", "storage", "tvcontrol")  # written by the member, served where they are kept (orman-tv-widgets)
+MEMBER_TYPES = ("reminders", "storage", "tvcontrol")  # written by the member, served where they are kept (the source's member store)
 EPG_DEFAULT, EPG_MAX = 86400, 7 * 86400
 READ_BUCKET = 300  # seconds of from/to that name one kept read
 REGION = re.compile(r"[A-Z]{2}")
@@ -152,7 +152,7 @@ class Provider:
     trust = 50          # 0-100, set by the source's owner: breaks field conflicts in the merge (§3.3)
     attribution = None  # {"text", "link", "license", "license_link", "display": "about"|"item"}
     notice = ""         # "Not affiliated with ..."
-    public = False      # the provider's own declaration; who is granted it is orman-tv-auth's config
+    public = False      # the provider's own declaration; who is granted it is the source's auth layer
     delta = None        # True: a `since` read answers what changed and `deleted`; False: every `since` is 410 (a full
                         # read is the only read). The declaration decides, not the data: conform tests it.
     cache_reads = 0     # seconds one read's items serve its later pages (0: built for every request)
@@ -301,6 +301,10 @@ def envelope(provider, contract_type, query):
             if isinstance(raw, dict):
                 if query.kinds and raw.get("kind") not in tuple(query.kinds):
                     continue
+                # clean() keeps supported text verbatim and only removes fields: it cannot create a search
+                # match. The post-clean filter stays too, since a removed field may have matched raw text.
+                if query.q and not found_by(raw, query.q):
+                    continue
                 if query.ids:
                     try:
                         if not matches(raw, query.ids, provider.id):
@@ -309,7 +313,8 @@ def envelope(provider, contract_type, query):
                         pass  # malformed provider data still goes through schema validation and logging
             item, errors = clean(contract_type, raw)
             if errors:  # a provider bug never reaches a member; the journal says what was wrong
-                LOG.warning("%s %s: dropped %s: %s", provider.id, contract_type, raw.get("id"), "; ".join(errors[:3]))
+                LOG.warning("%s %s: dropped %s: %s", provider.id, contract_type,
+                            raw.get("id") if isinstance(raw, dict) else None, "; ".join(errors[:3]))
                 dropped += 1
                 continue
             if not str(item["id"]).startswith(provider.id + ":"):

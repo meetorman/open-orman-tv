@@ -187,6 +187,17 @@ class ServeTests(unittest.TestCase):
             server.server_close()
             store.close()
 
+    def test_a_provider_is_loaded_by_id_or_by_module_path(self):
+        self.assertEqual(serve.load("pdfilms").id, "pdfilms")
+        self.assertEqual(serve.load("tests.rigged").id, "rigged")
+        self.assertEqual(serve.load("tests.test_serve").id, "secret")  # this module's own, not the ones it imports
+        with self.assertRaises(LookupError):
+            serve.load("tests.test_conform")  # several of its own
+        with self.assertRaises(LookupError):
+            serve.load("tests.test_schema")  # none
+        with self.assertRaises(ImportError):
+            serve.load("nosuch")
+
     def test_the_default_config_serves_pdfilms_public(self):
         config = serve.read_config("no-such-source.json")
         self.assertEqual(config["providers"], ["pdfilms"])

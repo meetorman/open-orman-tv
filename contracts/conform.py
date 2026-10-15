@@ -369,9 +369,16 @@ class Run:
         found = set()
         ids = sorted(set(ids))
         for start in range(0, len(ids), contracts.MAX_IDS):
-            code, body = self.get("/p/%s/metadata" % self.pid, ids=",".join(ids[start:start + contracts.MAX_IDS]))
-            if code == 200:
+            batch, cursor = ",".join(ids[start:start + contracts.MAX_IDS]), None
+            while True:  # a series id also matches its episodes (series_id): a batch can be more than a page
+                params = {"ids": batch, "limit": contracts.MAX_LIMIT} | ({"cursor": cursor} if cursor else {})
+                code, body = self.get("/p/%s/metadata" % self.pid, **params)
+                if code != 200:
+                    break
                 found |= {i["id"] for i in body["items"]}
+                cursor = body.get("next_cursor")
+                if not cursor:
+                    break
         return found
 
     def check_airings(self):

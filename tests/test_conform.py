@@ -108,6 +108,34 @@ class Forgetful(Good):
         return []
 
 
+class LongSeries(contracts.Provider):
+    """A series whose episodes outnumber a page: looking its id up matches them all (series_id)."""
+    id, name = "long", "Long"
+    types = ("metadata", "availability")
+    subcategories = ("tv-shows",)
+    regions, trust, public, delta = ("US",), 50, True, False
+    attribution = {"text": "Made up", "link": "https://long.example/about", "display": "about"}
+    EPISODES = contracts.MAX_LIMIT + 5
+
+    def changed_at(self, contract_type):
+        return T0
+
+    def removed_since(self, contract_type, since):
+        return None
+
+    def metadata(self, query):
+        at = contracts.iso(T0)
+        episodes = [{"id": "long:e%05d" % n, "kind": "episode", "title": "Part %d" % n, "series_id": "long:show",
+                     "updated_at": at} for n in range(self.EPISODES)]
+        return episodes + [{"id": "long:show", "kind": "series", "title": "The Long Show", "updated_at": at},
+                           {"id": "long:ch", "kind": "channel", "name": "Long One", "country": "US", "updated_at": at}]
+
+    def availability(self, query):
+        return [{"id": "long:air", "kind": "airing", "channel_id": "long:ch", "start": contracts.iso(T0),
+                 "end": contracts.iso(T0 + 3600), "title": "The Long Show", "work_id": "long:show",
+                 "updated_at": contracts.iso(T0)}]
+
+
 def run(provider, change=None):
     checks = conform.Run(provider.id, provider, change, T0, offline=True).run()
     return {c.name: c for c in checks}
@@ -141,6 +169,10 @@ class KitTests(unittest.TestCase):
         self.assertIn("1 airings have no work_id", failed["airings"])
         self.assertIn("no offer of service bad", failed["content"])
         self.assertTrue(checks["access"].ok and checks["lookups"].ok and checks["licence"].ok)
+
+    def test_an_airing_of_a_series_with_more_episodes_than_a_page_resolves(self):
+        checks = run(LongSeries())
+        self.assertTrue(checks["airings"].ok, checks["airings"].problems)
 
     def test_a_delta_that_forgets_its_removals_fails(self):
         forgetful = Forgetful()

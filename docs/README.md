@@ -25,3 +25,4 @@
 | File | Holds |
 |---|---|
 | `build-a-provider.md` | Five steps from nothing to a green conformance run. |
+| `run-your-own-source.md` | Clone, serve, grant: your providers behind HTTP for the app to add. |

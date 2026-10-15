@@ -282,7 +282,7 @@ class Run:
             ", ".join(counts), max(self.slowest.values(), default=0)))
 
     def check_delta(self):
-        declared = self.provider.delta
+        declared = self.provider.describe().get("delta")  # what /v1/p says: a stored provider declares true whatever its class says
         problems = []
         for t in self.feed_types:
             token = self.tokens.get(t)

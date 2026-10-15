@@ -15,7 +15,8 @@ python3 -m contracts.serve
 ```
 
    `http://<your host>:8080/v1/source` answers with the source and its public providers. That is the URL to add in the
-   app. Stop here if `pdfilms` is all you want.
+   app. Stop here if `pdfilms` is all you want. A big provider is served from the store (`../contract/STORE.md`):
+   `python3 -m contracts.serve --db source.db` syncs it at start and reads are indexed, with real `since` deltas.
 
 3. **Add a provider.** Write `contracts/<id>.py` as `build-a-provider.md` says, then prove it:
 

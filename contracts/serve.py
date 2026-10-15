@@ -2,6 +2,7 @@
 
     python3 -m contracts.serve                              pdfilms, public, on port 8080
     python3 -m contracts.serve --port 8080 --config source.json
+    python3 -m contracts.serve --db source.db               the providers synced into the store first, served from it
 
 `source.json` (see source.example.json) names the source, the providers to load (`contracts/<id>.py`, each a
 `contracts.Provider` subclass built with no arguments) and the members: a bearer token each and the provider ids
@@ -13,9 +14,16 @@ token the file doesn't name is 401. A public provider is in every view. The rout
   GET /v1/p/{provider}/{type}      the envelope, exactly as contracts.Source answers it; 404 when not in the view
   GET /v1/p/-/{type}?q=|ids=       a lookup across the view
 
+With `--db` every provider is synced into the store (contracts/store.py, docs/contract/STORE.md) at start and
+served from it: indexed reads, real `since` deltas. `python3 -m contracts.store sync <id> --db source.db` refreshes
+it while the server runs. Every envelope carries a weak ETag (the sync token and the canonical query): a request
+with `If-None-Match` for it is answered 304, and a JSON body is gzipped when `Accept-Encoding` allows.
+
 Stdlib only. No TLS, no sessions, no rate limit: keep it on your LAN or put a reverse proxy in front of it.
 """
 import argparse
+import gzip
+import hashlib
 import hmac
 import importlib
 import json
@@ -23,12 +31,46 @@ import logging
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 import sys
-from urllib.parse import parse_qs, unquote, urlsplit
+import time
+from urllib.parse import parse_qs, unquote, urlencode, urlsplit
 
 import contracts
 
 LOG = logging.getLogger("orman-source")
 DEFAULT = {"id": "my-source", "name": "My source", "providers": ["pdfilms"], "members": []}
+GZIP_FROM = 1024  # bytes: a smaller body is sent as it is
+
+
+def etag(path, params, body, now=None):
+    """W/"<sync_token>.<query>" for an envelope: the sync token and the canonical query (sorted parameters). An
+    availability read without both from and to is a window from now, which moves, so a bucket of now joins it."""
+    if not isinstance(body, dict) or not body.get("sync_token"):
+        return None
+    canon = path + "?" + urlencode(sorted((k, v) for k, values in params.items() for v in values))
+    if body.get("type") == "availability" and not (params.get("from") and params.get("to")):
+        canon += "#%d" % (int(now or time.time()) // contracts.READ_BUCKET)
+    return 'W/"%s.%s"' % (body["sync_token"], hashlib.sha1(canon.encode()).hexdigest()[:16])
+
+
+def none_match(header, tag):
+    """Whether an If-None-Match header names `tag` (weak comparison) or everything."""
+    if not header or not tag:
+        return False
+    wanted = tag[2:] if tag.startswith("W/") else tag
+    for given in (g.strip() for g in header.split(",")):
+        if given == "*" or (given[2:] if given.startswith("W/") else given) == wanted:
+            return True
+    return False
+
+
+def accepts_gzip(header):
+    """Whether an Accept-Encoding header allows gzip (a q=0 refuses it)."""
+    for part in (header or "").split(","):
+        name, _, rest = part.strip().partition(";")
+        if name.strip().lower() in ("gzip", "*"):
+            q = rest.strip().lower().replace(" ", "")
+            return not (q.startswith("q=") and q[2:] in ("0", "0.0", "0.00", "0.000"))
+    return False
 
 
 def read_config(path):
@@ -61,9 +103,9 @@ def load(pid):
 class App:
     """One source: its providers on a contracts.Source, and who sees which."""
 
-    def __init__(self, config, providers):
+    def __init__(self, config, providers, store=None):
         self.id, self.name = config["id"], config["name"]
-        self.source = contracts.Source(providers)
+        self.source = contracts.Source(providers, store)
         self.public = {p.id for p in providers if p.public}
         self.members = {m["token"]: self.public | set(m.get("providers") or ()) for m in config.get("members") or []}
 
@@ -82,27 +124,45 @@ class App:
 
     def answer(self, raw_path, authorization=None):
         """(status, body) for one GET: the path with its query string, and the Authorization header."""
+        return self.respond(raw_path, authorization)[:2]
+
+    def respond(self, raw_path, authorization=None, now=None):
+        """(status, body, etag) for one GET; the etag is set on an envelope, None otherwise."""
         parts = urlsplit(raw_path)
         path = unquote(parts.path)
         if path == "/v1/source":
             return 200, {"id": self.id, "name": self.name, "contracts": self.source.contracts(),
-                         "providers": [p.describe() for p in self.source.providers.values() if p.id in self.public]}
+                         "providers": [p.describe() for p in self.source.providers.values() if p.id in self.public]}, None
         if path != "/v1/p" and not path.startswith("/v1/p/"):
-            return 404, {"error": "not_found"}
+            return 404, {"error": "not_found"}, None
         seen = self.view(authorization)
         if seen is None:
-            return 401, {"error": "unauthorized", "message": "This source doesn't know that token."}
-        return self.source.answer(path[3:], parse_qs(parts.query, keep_blank_values=True), seen)
+            return 401, {"error": "unauthorized", "message": "This source doesn't know that token."}, None
+        params = parse_qs(parts.query, keep_blank_values=True)
+        code, body = self.source.answer(path[3:], params, seen, now)
+        return code, body, etag(path, params, body, now) if code == 200 else None
 
 
 class Handler(BaseHTTPRequestHandler):
     server_version, sys_version = "open-orman-tv", ""
 
     def do_GET(self):
-        code, body = self.server.app.answer(self.path, self.headers.get("Authorization"))
+        code, body, tag = self.server.app.respond(self.path, self.headers.get("Authorization"))
+        if tag and none_match(self.headers.get("If-None-Match"), tag):
+            self.send_response(304)
+            self.send_header("ETag", tag)
+            self.send_header("Vary", "Accept-Encoding")
+            self.end_headers()
+            return
         raw = json.dumps(body, separators=(",", ":")).encode()
         self.send_response(code)
         self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Vary", "Accept-Encoding")
+        if tag:
+            self.send_header("ETag", tag)
+        if len(raw) >= GZIP_FROM and accepts_gzip(self.headers.get("Accept-Encoding")):
+            raw = gzip.compress(raw, 6)
+            self.send_header("Content-Encoding", "gzip")
         self.send_header("Content-Length", str(len(raw)))
         if code == 401:
             self.send_header("WWW-Authenticate", "Bearer")
@@ -126,10 +186,18 @@ def main(argv=None):
     parser.add_argument("--config", default="source.json", help="the source, its providers and members (default source.json)")
     parser.add_argument("--host", default="0.0.0.0", help="the address to bind (default every interface)")
     parser.add_argument("--port", type=int, default=8080, help="the port (default 8080)")
+    parser.add_argument("--db", help="sync the providers into this SQLite store at start and serve them from it")
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
     config = read_config(args.config)
-    app = App(config, [load(pid) for pid in config["providers"]])
+    providers = [load(pid) for pid in config["providers"]]
+    store = None
+    if args.db:
+        from contracts.store import Store
+        store = Store(args.db)
+        for provider in providers:
+            provider.sync(store)
+    app = App(config, providers, store)
     server = listen(app, args.host, args.port)
     LOG.info("%s (%s) on http://%s:%d/v1/source: %s", app.id, app.name, *server.server_address[:2],
              ", ".join("%s (%s)" % (pid, "public" if pid in app.public else "private") for pid in app.source.providers))

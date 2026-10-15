@@ -156,6 +156,7 @@ class Provider:
     delta = None        # True: a `since` read answers what changed and `deleted`; False: every `since` is 410 (a full
                         # read is the only read). The declaration decides, not the data: conform tests it.
     cache_reads = 0     # seconds one read's items serve its later pages (0: built for every request)
+    store = None        # a contracts.store.Store this provider was synced into: reads come from it, delta is True
 
     def changed_at(self, contract_type):
         """When this type's data last changed (epoch seconds), or None when unknown."""
@@ -167,6 +168,12 @@ class Provider:
 
     def handler(self, contract_type):
         return getattr(self, contract_type)
+
+    def sync(self, store, now=None):
+        """The write path (contracts/store.py): every feed type read whole through its type method, cleaned,
+        upserted, what vanished written as a tombstone. From then on this provider answers from the store. A
+        provider that can write its store more cleverly (a delta from its upstream) overrides this."""
+        return store.sync(self, now)
 
     def overlays(self, widget, now):
         """A widget provider's current overlay messages for one of its `pull` widgets (docs/widget-engine.md §7):
@@ -181,7 +188,9 @@ class Provider:
             out["attribution"] = dict(self.attribution)
         if self.notice:
             out["notice"] = self.notice
-        if self.delta is not None:
+        if self.store is not None:
+            out["delta"] = True  # a stored provider serves `since` from updated_at and tombstones, whatever it declares
+        elif self.delta is not None:
             out["delta"] = bool(self.delta)
         return out
 
@@ -252,6 +261,8 @@ def updated(item):
 
 def envelope(provider, contract_type, query):
     """The contract's answer for one provider and type (§2)."""
+    if provider.store is not None and provider.store.synced(provider.id, contract_type):
+        return provider.store.read(provider, contract_type, query)  # indexed SELECTs; the in-memory build below is the fallback
     changed = provider.changed_at(contract_type)
     token = sync_token(changed)
     offset = 0
@@ -341,8 +352,12 @@ def envelope(provider, contract_type, query):
 class Source:
     """The providers this source hosts, answering /v1/p and /v1/p/{provider}/{type}."""
 
-    def __init__(self, providers):
+    def __init__(self, providers, store=None):
         self.providers = {p.id: p for p in providers}
+        if store is not None:  # every provider the store holds answers from it (contracts/store.py)
+            for provider in providers:
+                if store.synced(provider.id):
+                    provider.store = store
 
     def contracts(self):
         """{type: version} for every type a hosted provider implements."""

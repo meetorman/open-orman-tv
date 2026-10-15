@@ -4,8 +4,10 @@
     python3 -m contracts.conform freetv pdfilms          several
     python3 -m contracts.conform --all                   every provider with a rig (contracts/<id>.py: `rig`)
     python3 -m contracts.conform pdfilms --offline       no network: the HEAD of each stream URL is skipped
+    python3 -m contracts.conform pdfilms --url http://127.0.0.1:8080 [--token T] [--other-token T]
+                                                         the same checks read over HTTP from a running source
 
-A provider is run in-process, never over the wire: `contracts.<id>.rig(directory, now)` builds it from its fixture
+A provider is run in-process by default: `contracts.<id>.rig(directory, now)` builds it from its fixture
 (`contracts/fixtures/<id>.json`, or the provider's own data) in a scratch directory and returns the provider, or
 `(provider, change)` where `change()` makes one addition and one removal and returns `{type: (added ids, removed
 ids)}` so the delta check knows what to expect. The kit puts the provider alone on a `contracts.Source`, reads it as
@@ -29,15 +31,22 @@ a member whose view holds it and as one whose view doesn't, and runs the ten che
 
 The only network is the HEAD of check 4 (`--offline` skips it). The same checks run from the tests
 (test_contract_<id>.py: `conform.run(id, offline=True)`), so a provider that passes here passes there.
+
+With `--url` the kit reads a running source (contracts/serve.py) instead: the provider is what the server declares,
+`--token` is a view that holds it, `--other-token` one that doesn't (default: no token, the public providers). What
+needs the rig is skipped and says so: a `delta: true` change, and the ungranted half of access for a public provider
+without `--other-token`.
 """
 import argparse
 import importlib
+import json
 from pathlib import Path
 import re
 import sys
 import tempfile
 import time
 from urllib.error import HTTPError, URLError
+from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 import contracts
@@ -108,6 +117,50 @@ def head(url):
         return str(error)
 
 
+def fetch(url, token=None, timeout=HEAD_TIMEOUT):
+    """(status, body) of one GET on a running source; a body that isn't JSON is {"error": "not_json"}."""
+    headers = {"Accept": "application/json"}
+    if token:
+        headers["Authorization"] = "Bearer " + token
+    try:
+        with urlopen(Request(url, headers=headers), timeout=timeout) as r:
+            return r.status, json.load(r)
+    except HTTPError as error:
+        with error:
+            try:
+                return error.code, json.load(error)
+            except ValueError:
+                return error.code, {"error": "not_json"}
+
+
+class Remote:
+    """Reads a running source over HTTP: a view that holds the provider is `token`, one that doesn't is `other`."""
+
+    def __init__(self, url, pid, token=None, other=None):
+        self.url, self.pid, self.token, self.other = url.rstrip("/"), pid, token, other
+
+    def __call__(self, path, params, seen, now):
+        query = urlencode({k: v[0] for k, v in params.items()})
+        return fetch("%s/v1%s%s" % (self.url, path, "?" + query if query else ""),
+                     self.token if self.pid in seen else self.other)
+
+
+def declared(remote):
+    """A stand-in provider from what the server declares: its /v1/p entry for the view that holds it, and whether
+    /v1/source lists it as public."""
+    code, body = remote("/p", {}, {remote.pid}, None)
+    entry = next((p for p in body.get("providers") or [] if p.get("id") == remote.pid), None) if code == 200 else None
+    if entry is None:
+        raise LookupError("%s/v1/p does not list %s for this view (%s)" % (remote.url, remote.pid, "--token" if remote.token else "no token"))
+    code, body = fetch(remote.url + "/v1/source")
+    provider = contracts.Provider()
+    for key in ("id", "name", "types", "subcategories", "regions", "trust", "attribution", "notice", "delta"):
+        if key in entry:
+            setattr(provider, key, tuple(entry[key]) if isinstance(entry[key], list) else entry[key])
+    provider.public = code == 200 and any(p.get("id") == remote.pid for p in body.get("providers") or [])
+    return provider
+
+
 def arts(value, path="item", under=False):
     """Every art object in value (a dict with `url` that isn't a stream), as (path, dict)."""
     found = []
@@ -131,10 +184,12 @@ def strong_ids(item):
 class Run:
     """One provider under the kit: a Source holding it alone, read with a view that has it and one that doesn't."""
 
-    def __init__(self, pid, provider, change, now, offline=False, budget=5.0):
+    def __init__(self, pid, provider, change, now, offline=False, budget=5.0, remote=None):
         self.pid, self.provider, self.change = pid, provider, change
         self.now, self.offline, self.budget = int(now), offline, budget
-        self.source = contracts.Source([provider])
+        self.remote = remote  # a Remote: read a running source instead of the Source below
+        self.source = contracts.Source([provider]) if remote is None else None
+        self.read = remote or (lambda path, params, seen, now: self.source.answer(path, params, seen, now=now))
         self.view = {pid}
         self.items, self.tokens, self.slowest = {}, {}, {}
         self.feed_types = [t for t in provider.types if t not in contracts.MEMBER_TYPES]
@@ -149,8 +204,7 @@ class Run:
     def get(self, path, seen=None, **params):
         contract_type = path.rsplit("/", 1)[-1]
         started = time.monotonic()
-        code, body = self.source.answer(path, self.params(contract_type, **params),
-                                        set(self.view if seen is None else seen), now=self.now)
+        code, body = self.read(path, self.params(contract_type, **params), set(self.view if seen is None else seen), self.now)
         took = time.monotonic() - started
         self.slowest[contract_type] = max(self.slowest.get(contract_type, 0), took)
         return code, body
@@ -228,7 +282,7 @@ class Run:
             ", ".join(counts), max(self.slowest.values(), default=0)))
 
     def check_delta(self):
-        declared = self.provider.delta
+        declared = self.provider.describe().get("delta")  # what /v1/p says: a stored provider declares true whatever its class says
         problems = []
         for t in self.feed_types:
             token = self.tokens.get(t)
@@ -247,6 +301,9 @@ class Run:
         if declared is not True:
             problems.append("delta is not declared, so it can't be tested")
             return Check("delta", problems, "")
+        if self.remote:
+            return Check("delta", problems, "true: a foreign since is 410; a change can't be made over HTTP (the rig's change() runs in-process)",
+                         skipped=not problems)
         if self.change is None:
             problems.append("delta is true but the rig returns no change(): the kit can't make a change to read since")
             return Check("delta", problems, "")
@@ -413,25 +470,30 @@ class Run:
 
     def check_access(self):
         problems = []
-        code, body = self.get("/p", seen=OTHER)
-        if any(p["id"] == self.pid for p in body["providers"]):
-            problems.append("listed in /v1/p for a view that doesn't hold it")
-        if any(p["id"] == self.pid for p in self.get("/p", seen=set())[1]["providers"]):
-            problems.append("listed in /v1/p for an empty view")
-        for t in sorted(set(self.provider.types) | set(schema.PRIMARY) | {"nothing"}):
-            code, body = self.get("/p/%s/%s" % (self.pid, t), seen=OTHER)
-            if code != 404:
-                problems.append("/v1/p/%s/%s answers %s to a view that doesn't hold it, not 404" % (self.pid, t, code))
-        for t, items in self.items.items():
-            if items:
-                code, body = self.get("/p/-/%s" % t, seen=OTHER, ids=items[0]["id"])
-                if code != 200 or body["items"] or self.pid in body["providers"]:
-                    problems.append("/v1/p/-/%s?ids= shows the item to a view that doesn't hold the provider" % t)
+        # over HTTP a public provider is in every view: without --other-token there is no ungranted view to read as
+        no_other = bool(self.remote) and bool(self.provider.public) and not self.remote.other
+        if not no_other:
+            code, body = self.get("/p", seen=OTHER)
+            if any(p["id"] == self.pid for p in body["providers"]):
+                problems.append("listed in /v1/p for a view that doesn't hold it")
+            if any(p["id"] == self.pid for p in self.get("/p", seen=set())[1]["providers"]):
+                problems.append("listed in /v1/p for an empty view")
+            for t in sorted(set(self.provider.types) | set(schema.PRIMARY) | {"nothing"}):
+                code, body = self.get("/p/%s/%s" % (self.pid, t), seen=OTHER)
+                if code != 404:
+                    problems.append("/v1/p/%s/%s answers %s to a view that doesn't hold it, not 404" % (self.pid, t, code))
+            for t, items in self.items.items():
+                if items:
+                    code, body = self.get("/p/-/%s" % t, seen=OTHER, ids=items[0]["id"])
+                    if code != 200 or body["items"] or self.pid in body["providers"]:
+                        problems.append("/v1/p/-/%s?ids= shows the item to a view that doesn't hold the provider" % t)
 
         try:
             import play  # the source's stream gateway, when this source has one
         except ImportError:
             play = None
+        if self.remote:
+            play = None  # the gateway is read in-process; a running source's is the host's
         if play is not None:
             def refuse(*a, **k):
                 raise AssertionError("the stream gateway reached the direct service for an ungranted member")
@@ -449,6 +511,9 @@ class Run:
             if self.get("/p/%s/%s" % (self.pid, t))[0] != 200:
                 problems.append("/v1/p/%s/%s is not 200 for a view that holds it" % (self.pid, t))
         gate = "and on /v1/play" if play is not None else "(no stream gateway in this source)"
+        if no_other:
+            return Check("access", problems, "public: in every view, the ungranted half needs --other-token; granted: listed, every type 200",
+                         skipped=not problems)
         return Check("access", problems, "ungranted: absent from /v1/p, 404 on every type %s; granted: listed, every type 200" % gate)
 
     def check_proof(self):
@@ -486,19 +551,37 @@ def run(pid, offline=False, now=None, budget=5.0):
         return Run(pid, provider, change, now, offline=offline, budget=budget).run()
 
 
+def run_url(pid, url, token=None, other=None, offline=False, budget=5.0):
+    """The checks for one provider read over HTTP from the source at `url` (contracts/serve.py)."""
+    remote = Remote(url, pid, token, other)
+    try:
+        provider = declared(remote)
+    except (LookupError, URLError, OSError, ValueError) as error:
+        return [Check("declaration", [str(error)], "")]
+    return Run(pid, provider, None, time.time(), offline=offline, budget=budget, remote=remote).run()
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="python3 -m contracts.conform", description="Is this provider on the contract? (docs/contract/PROVIDERS.md §6)")
     parser.add_argument("provider", nargs="*", help="provider ids (contracts/<id>.py with a rig)")
     parser.add_argument("--all", action="store_true", help="every provider with a rig")
     parser.add_argument("--offline", action="store_true", help="skip the HEAD of each stream URL (the only network)")
     parser.add_argument("--budget", type=float, default=5.0, help="seconds a page may take (default 5)")
+    parser.add_argument("--url", help="read a running source over HTTP instead of the rig, e.g. http://127.0.0.1:8080")
+    parser.add_argument("--token", help="with --url: a bearer token whose view holds the provider")
+    parser.add_argument("--other-token", help="with --url: a bearer token whose view doesn't (default: no token)")
     args = parser.parse_args(argv)
     ids = rigs() if args.all else args.provider
+    if args.url and args.all:
+        parser.error("--all runs the rigs; with --url name the providers")
     if not ids:
         parser.error("name a provider, or --all (rigs: %s)" % ", ".join(rigs()))
     failed = []
     for pid in ids:
-        checks = run(pid, offline=args.offline, budget=args.budget)
+        if args.url:
+            checks = run_url(pid, args.url, args.token, args.other_token, offline=args.offline, budget=args.budget)
+        else:
+            checks = run(pid, offline=args.offline, budget=args.budget)
         for check in checks:
             print(check.line(pid))
         bad = [c.name for c in checks if not c.ok]

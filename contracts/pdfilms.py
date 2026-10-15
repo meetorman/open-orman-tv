@@ -13,6 +13,8 @@ catalogue: about a dozen films, the ones a films metadata provider also lists.
 Check the list again (network; prints one line per film and exits non-zero on a problem):
     python3 -m contracts.pdfilms
 """
+from pathlib import Path
+
 import contracts
 
 ID = "pdfilms"
@@ -68,10 +70,14 @@ class PublicDomainFilms(contracts.Provider):
     regions = ("US",)  # public domain in the US; elsewhere a film's status can differ
     trust = 30
     public = True
-    delta = False  # a hand-checked list that changes only with a release: no delta, read it all (a dozen items)
+    delta = False  # a hand-checked list that changes only with a release: no delta from the list itself (a dozen items);
+                   # synced into the store (contracts/store.py) it serves one like any stored provider
     attribution = {"text": "Films from the Internet Archive, public domain in the US",
                    "link": "https://archive.org/details/feature_films", "license": "Public domain",
                    "license_link": "https://creativecommons.org/publicdomain/mark/1.0/", "display": "item"}
+
+    def __init__(self, films=None):
+        self.films = list(FILMS if films is None else films)
 
     def changed_at(self, contract_type):
         return contracts.parse_time(CHECKED)
@@ -81,12 +87,12 @@ class PublicDomainFilms(contracts.Provider):
         return [{"id": "%s:%s" % (ID, qid), "kind": "offer", "ids": {"wikidata": qid, "imdb": imdb}, "title": title,
                  "updated_at": CHECKED, "subcategories": ["movies"], "window": {"end": None},
                  "service": ID, "service_name": self.name, "region": "US", "access": "free"}
-                for qid, imdb, title, *_ in FILMS]
+                for qid, imdb, title, *_ in self.films]
 
     def content(self, query):
         """What this provider can deliver of the service: each film's archive.org MP4, to play in the app."""
         out = []
-        for qid, imdb, title, year, item, name, seconds, height, size, licence in FILMS:
+        for qid, imdb, title, year, item, name, seconds, height, size, licence in self.films:
             code, label, link = LICENSES[licence]
             out.append({"id": "%s:%s" % (ID, qid), "kind": "movie", "service": ID, "title": title, "year": year,
                         "ids": {"wikidata": qid, "imdb": imdb}, "updated_at": CHECKED, "duration": seconds,
@@ -102,8 +108,23 @@ class PublicDomainFilms(contracts.Provider):
 
 
 def rig(directory, now):
-    """The conformance rig (contracts.conform): the provider as it is; its list is its fixture."""
-    return PublicDomainFilms()
+    """The conformance rig (contracts.conform): the provider as it is, its list its fixture, synced into a store in
+    `directory` so the kit reads it as the reference source serves it. `change()` adds a film and removes the first,
+    then syncs again, so the delta check has a change and a removal to look for."""
+    from contracts.store import Store
+
+    provider = PublicDomainFilms()
+    store = Store(str(Path(directory) / "pdfilms.db"))
+    provider.sync(store, now)
+
+    def change():
+        first = provider.films[0][0]
+        added = ("Q0", "tt0000000", "A film added by the kit", 1950, "kit", "kit.mp4", 600, 240, 1, PD)
+        provider.films = [added] + provider.films[1:]
+        provider.sync(store, now + 1)
+        return {t: (["%s:Q0" % ID], ["%s:%s" % (ID, first)]) for t in provider.types}
+
+    return provider, change
 
 
 def verify():

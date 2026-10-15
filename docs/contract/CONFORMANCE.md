@@ -6,7 +6,8 @@ A provider is granted to anyone only when this passes:
 python3 -m contracts.conform <id>
 ```
 
-One line per check. Non-zero on any failure. `--offline` skips the network check.
+One line per check. Non-zero on any failure. `--offline` skips the network check. `--url <source>` runs the same
+checks over HTTP against a running source (`docs/guides/run-your-own-source.md`).
 
 | # | Check |
 |---|---|

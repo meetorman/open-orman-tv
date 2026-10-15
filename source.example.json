@@ -1,0 +1,8 @@
+{
+  "id": "my-source",
+  "name": "My source",
+  "providers": ["pdfilms"],
+  "members": [
+    {"name": "Alice", "token": "change-me-to-a-long-random-string", "providers": []}
+  ]
+}

@@ -10,9 +10,13 @@ The Orman TV provider contract, its SDK, and the conformance kit. Run your own p
 | `docs/contract/` | Types, envelopes, versioning, conformance. |
 | `docs/decisions/` | Why the contract is the way it is. One file per decision. |
 | `docs/guides/` | How to build a provider, how to run a source. |
-| `contracts/` | SDK, schemas, reference provider, conformance kit. Lands with #1. |
+| `contracts/` | SDK, schemas, reference provider, conformance kit. |
 | `GOVERNANCE.md` | How this repo decides and ships. |
 | `CHANGELOG.md` | One line per change to the contract. |
+
+## License
+
+Apache-2.0. See `LICENSE`.
 
 ## Quick start
 

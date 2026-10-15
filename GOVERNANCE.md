@@ -22,7 +22,7 @@ Short. Three parts: **what**, **done when**, **out**. Use the templates.
 
 ## Pull requests
 
-A few lines: what changed, how it was proven. One reviewer. Squash-merge.
+A few lines: what changed, how it was proven. One reviewer. Squash-merge into `develop`; a merge commit from `develop` to `main`, tagged.
 
 ## Changing the contract
 

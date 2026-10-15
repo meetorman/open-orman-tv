@@ -1,0 +1,131 @@
+{
+  "$id": "widgets.widget.schema.json",
+  "title": "widgets, kind widget: one widget a provider offers (docs/widget-engine.md \u00a75)",
+  "type": "object",
+  "required": [
+    "id",
+    "kind",
+    "name",
+    "template",
+    "class",
+    "sample",
+    "updated_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "kind": {
+      "enum": [
+        "widget"
+      ]
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/time"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 140
+    },
+    "template": {
+      "enum": [
+        "toast",
+        "card",
+        "scoreboard",
+        "list",
+        "pip",
+        "qr",
+        "ticker"
+      ]
+    },
+    "class": {
+      "enum": [
+        "live",
+        "notify"
+      ]
+    },
+    "slots": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "enum": [
+          "top-left",
+          "top-right",
+          "bottom-left",
+          "bottom-right",
+          "lower-third",
+          "side",
+          "center",
+          "top-bar"
+        ]
+      }
+    },
+    "size": {
+      "enum": [
+        "s",
+        "m",
+        "l"
+      ]
+    },
+    "accent": {
+      "enum": [
+        "blue",
+        "green",
+        "red",
+        "orange",
+        "yellow",
+        "purple",
+        "teal",
+        "gray"
+      ]
+    },
+    "default": {
+      "enum": [
+        "on",
+        "off"
+      ]
+    },
+    "media_hosts": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9.-]{1,253}$"
+      }
+    },
+    "sample": {
+      "type": "object"
+    },
+    "pull": {
+      "type": "boolean"
+    },
+    "any_template": {
+      "type": "boolean"
+    },
+    "engine": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "attribution": {
+      "$ref": "common.schema.json#/$defs/attribution"
+    },
+    "once": {
+      "type": "boolean"
+    },
+    "callback": {
+      "$ref": "common.schema.json#/$defs/link"
+    },
+    "push": {
+      "enum": [
+        "always",
+        "closed"
+      ]
+    }
+  }
+}

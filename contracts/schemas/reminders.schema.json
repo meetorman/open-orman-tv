@@ -1,0 +1,13 @@
+{
+  "$id": "reminders.schema.json",
+  "title": "reminders v1: a member's reminders for programme airings (docs/provider-contracts.md \u00a72.6)",
+  "x-version": 1,
+  "x-ttl": 60,
+  "type": "object",
+  "required": [
+    "kind"
+  ],
+  "x-kinds": {
+    "reminder": "reminders.reminder"
+  }
+}

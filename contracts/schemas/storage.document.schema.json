@@ -1,0 +1,39 @@
+{
+  "$id": "storage.document.schema.json",
+  "title": "storage, kind document: one member's document, a key, a JSON value and a version (docs/contract/)",
+  "type": "object",
+  "x-playable": true,
+  "required": [
+    "key",
+    "kind",
+    "version",
+    "updated_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "key": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._~:@-]*(/[A-Za-z0-9._~:@-]+)*$"
+    },
+    "kind": {
+      "enum": [
+        "document"
+      ]
+    },
+    "value": {
+      "description": "Any JSON value, at most 65536 bytes as compact JSON. Left out of a listing with values=0."
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "created_at": {
+      "$ref": "common.schema.json#/$defs/time"
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/time"
+    }
+  }
+}

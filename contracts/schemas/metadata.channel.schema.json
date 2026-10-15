@@ -1,0 +1,65 @@
+{
+  "$id": "metadata.channel.schema.json",
+  "title": "metadata, kind channel: what a channel is (CNN, KABC): its canonical ids, feed, logo",
+  "type": "object",
+  "required": [
+    "id",
+    "kind",
+    "name",
+    "country",
+    "updated_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "ids": {
+      "$ref": "common.schema.json#/$defs/ids",
+      "description": "call_sign, sd, gracenote (station ids), wikidata, tvmaze_network, tvg_id"
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/time"
+    },
+    "attribution": {
+      "$ref": "common.schema.json#/$defs/attribution"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "country": {
+      "$ref": "common.schema.json#/$defs/region"
+    },
+    "feed": {
+      "enum": [
+        "east",
+        "west",
+        "pacific"
+      ]
+    },
+    "affiliate_of": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "hd": {
+      "type": "boolean"
+    },
+    "language": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "logo": {
+      "$ref": "common.schema.json#/$defs/art"
+    },
+    "kind": {
+      "enum": [
+        "channel"
+      ]
+    },
+    "subcategories": {
+      "$ref": "common.schema.json#/$defs/subcategories"
+    }
+  }
+}

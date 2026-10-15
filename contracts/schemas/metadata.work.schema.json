@@ -1,0 +1,295 @@
+{
+  "$id": "metadata.work.schema.json",
+  "title": "metadata, kinds movie|series|season|episode|event: what a work is",
+  "type": "object",
+  "required": [
+    "id",
+    "kind",
+    "title",
+    "updated_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "ids": {
+      "$ref": "common.schema.json#/$defs/ids"
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/time"
+    },
+    "attribution": {
+      "$ref": "common.schema.json#/$defs/attribution"
+    },
+    "kind": {
+      "enum": [
+        "movie",
+        "series",
+        "season",
+        "episode",
+        "event"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "year": {
+      "type": "integer",
+      "minimum": 1870,
+      "maximum": 2100
+    },
+    "release_date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "overview": {
+      "type": "string",
+      "maxLength": 5000
+    },
+    "runtime": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "genres": {
+      "$ref": "common.schema.json#/$defs/strings"
+    },
+    "original_language": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "certification": {
+      "type": "object",
+      "required": [
+        "region",
+        "rating"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "region": {
+          "$ref": "common.schema.json#/$defs/region"
+        },
+        "rating": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20
+        }
+      }
+    },
+    "cast": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "character": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "ids": {
+            "$ref": "common.schema.json#/$defs/ids"
+          }
+        }
+      }
+    },
+    "crew": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "job": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "ids": {
+            "$ref": "common.schema.json#/$defs/ids"
+          }
+        }
+      }
+    },
+    "art": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "poster": {
+          "$ref": "common.schema.json#/$defs/art"
+        },
+        "backdrop": {
+          "$ref": "common.schema.json#/$defs/art"
+        }
+      }
+    },
+    "popularity": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "subcategories": {
+      "$ref": "common.schema.json#/$defs/subcategories"
+    },
+    "series_id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "series_title": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "season": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "episode": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "episode_title": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "trailers": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "required": [
+          "link",
+          "site"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "kind": {
+            "enum": [
+              "trailer",
+              "teaser",
+              "clip"
+            ]
+          },
+          "link": {
+            "$ref": "common.schema.json#/$defs/link"
+          },
+          "site": {
+            "enum": [
+              "youtube",
+              "apple",
+              "vimeo",
+              "other"
+            ]
+          },
+          "language": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "official": {
+            "type": "boolean"
+          },
+          "published": {
+            "type": "string",
+            "maxLength": 40
+          }
+        }
+      }
+    },
+    "scores": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "required": [
+          "source",
+          "value"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "source": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "value": {
+            "type": "number"
+          },
+          "scale": {
+            "type": "number"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "as_of": {
+            "type": "string",
+            "maxLength": 40
+          }
+        }
+      }
+    },
+    "reviews": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "required": [
+          "outlet",
+          "link"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "outlet": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "author": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "excerpt": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "rating": {
+            "type": [
+              "string",
+              "number"
+            ]
+          },
+          "link": {
+            "$ref": "common.schema.json#/$defs/link"
+          },
+          "published": {
+            "type": "string",
+            "maxLength": 40
+          }
+        }
+      }
+    },
+    "network": {
+      "type": "string",
+      "maxLength": 200
+    }
+  }
+}

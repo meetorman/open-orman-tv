@@ -1,0 +1,13 @@
+{
+  "$id": "widgets.schema.json",
+  "title": "widgets v1: a widget provider's catalogue ",
+  "x-version": 1,
+  "x-ttl": 3600,
+  "type": "object",
+  "required": [
+    "kind"
+  ],
+  "x-kinds": {
+    "widget": "widgets.widget"
+  }
+}

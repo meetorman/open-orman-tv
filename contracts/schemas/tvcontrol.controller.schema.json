@@ -1,0 +1,81 @@
+{
+  "$id": "tvcontrol.controller.schema.json",
+  "title": "tvcontrol, kind controller: one orman-tv-controller registered to the member (docs/tv-control-contract.md §7)",
+  "type": "object",
+  "required": [
+    "kind",
+    "id",
+    "name",
+    "online",
+    "relay",
+    "provider",
+    "registered_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "enum": [
+        "controller"
+      ]
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^ctl_[0-9a-f]{16}$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60
+    },
+    "online": {
+      "type": "boolean",
+      "description": "Connected to this provider now: the relay can reach it."
+    },
+    "relay": {
+      "type": "boolean",
+      "description": "This provider relays calls to it when the member is away from home."
+    },
+    "provider": {
+      "type": "string",
+      "format": "uri",
+      "description": "This provider's base URL: the token's issuer, and where the relay is."
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tvs": {
+      "type": "array",
+      "description": "Its TVs as it last said (the controller's own /v1/tvs is the truth at home).",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "capabilities"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^tv_[0-9a-f]{12}$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "registered_at": {
+      "$ref": "common.schema.json#/$defs/time"
+    }
+  }
+}

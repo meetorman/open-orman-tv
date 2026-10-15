@@ -1,0 +1,16 @@
+{
+  "$id": "content.schema.json",
+  "title": "content v1: an item's kind picks its shape",
+  "x-version": 1,
+  "x-ttl": 86400,
+  "type": "object",
+  "required": [
+    "kind"
+  ],
+  "x-kinds": {
+    "movie": "content.play",
+    "preview": "content.preview",
+    "episode": "content.play",
+    "live": "content.live"
+  }
+}

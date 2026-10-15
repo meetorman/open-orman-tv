@@ -1,0 +1,93 @@
+{
+  "$id": "availability.channel.schema.json",
+  "title": "availability, kind channel: a service carries a channel (its lineup); channel_id or ids name the channel entity",
+  "type": "object",
+  "required": [
+    "id",
+    "kind",
+    "name",
+    "updated_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "ids": {
+      "$ref": "common.schema.json#/$defs/ids"
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/time"
+    },
+    "attribution": {
+      "$ref": "common.schema.json#/$defs/attribution"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "country": {
+      "$ref": "common.schema.json#/$defs/region"
+    },
+    "feed": {
+      "enum": [
+        "east",
+        "west",
+        "pacific"
+      ]
+    },
+    "affiliate_of": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "hd": {
+      "type": "boolean"
+    },
+    "language": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "number": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "groups": {
+      "$ref": "common.schema.json#/$defs/strings"
+    },
+    "open": {
+      "$ref": "common.schema.json#/$defs/open"
+    },
+    "kind": {
+      "enum": [
+        "channel"
+      ]
+    },
+    "subcategories": {
+      "$ref": "common.schema.json#/$defs/subcategories"
+    },
+    "service": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+    },
+    "service_name": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "channel_id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    }
+  },
+  "anyOf": [
+    {
+      "required": [
+        "channel_id"
+      ]
+    },
+    {
+      "required": [
+        "ids"
+      ]
+    }
+  ]
+}

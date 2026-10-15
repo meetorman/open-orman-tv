@@ -1,0 +1,321 @@
+{
+  "$id": "common.schema.json",
+  "title": "Shapes every metadata contract shares (docs/contract/, §4)",
+  "$defs": {
+    "item_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,31}:.{1,200}$"
+    },
+    "time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ids": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    "region": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$"
+    },
+    "link": {
+      "type": "string",
+      "pattern": "^https?://",
+      "maxLength": 2000
+    },
+    "app_link": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9+.-]*:",
+      "maxLength": 2000
+    },
+    "attribution": {
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "link": {
+          "$ref": "#/$defs/link"
+        },
+        "license": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "license_link": {
+          "$ref": "#/$defs/link"
+        },
+        "display": {
+          "enum": [
+            "about",
+            "item"
+          ]
+        }
+      }
+    },
+    "art": {
+      "type": "object",
+      "required": [
+        "url",
+        "license"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "$ref": "#/$defs/link"
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "license": {
+          "enum": [
+            "pd",
+            "cc0",
+            "cc-by",
+            "cc-by-sa",
+            "licensed",
+            "hotlink"
+          ]
+        },
+        "credit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 300
+        },
+        "rehost": {
+          "type": "boolean"
+        }
+      }
+    },
+    "open": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "ios": {
+          "$ref": "#/$defs/app_link"
+        },
+        "tvos": {
+          "$ref": "#/$defs/app_link"
+        },
+        "web": {
+          "$ref": "#/$defs/link"
+        }
+      }
+    },
+    "strings": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "maxItems": 50
+    },
+    "list_meta": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "period": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "region": {
+          "$ref": "#/$defs/region"
+        },
+        "as_of": {
+          "type": "string",
+          "maxLength": 40
+        }
+      }
+    },
+    "subcategories": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]{0,39}$"
+      },
+      "description": "The subcategory vocabulary (docs §2): movies, tv-shows, episodes, documentaries, docuseries, news, sports, kids, events, channels, apps; others allowed"
+    },
+    "window": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/time"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "declaration": {
+      "description": "A provider's declaration (docs/contract/PROVIDERS.md §2.1): what /v1/p lists for it. `types` is its only promise; `delta` says whether a `since` read is served.",
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "access",
+        "types",
+        "subcategories",
+        "regions",
+        "trust",
+        "attribution",
+        "delta"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "access": {
+          "enum": [
+            "public",
+            "private",
+            "granted"
+          ]
+        },
+        "types": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 20,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]{0,39}$"
+          }
+        },
+        "subcategories": {
+          "$ref": "#/$defs/subcategories"
+        },
+        "regions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 250,
+          "items": {
+            "$ref": "#/$defs/region"
+          }
+        },
+        "trust": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        },
+        "notice": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "delta": {
+          "type": "boolean"
+        }
+      }
+    },
+    "envelope": {
+      "description": "The feed envelope (docs/contract/PROVIDERS.md §2.4): one page of one provider's type. `deleted` is filled on the first page of a `since` read; `dropped` counts the items of this read that failed their shape and were not served.",
+      "type": "object",
+      "required": [
+        "provider",
+        "type",
+        "version",
+        "region",
+        "generated_at",
+        "ttl",
+        "items",
+        "deleted",
+        "dropped",
+        "sync_token"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+        },
+        "type": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{0,39}$"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "region": {
+          "$ref": "#/$defs/region"
+        },
+        "generated_at": {
+          "$ref": "#/$defs/time"
+        },
+        "ttl": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "deleted": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/item_id"
+          }
+        },
+        "dropped": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "next_cursor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sync_token": {
+          "type": "string",
+          "pattern": "^s_"
+        }
+      }
+    }
+  }
+}

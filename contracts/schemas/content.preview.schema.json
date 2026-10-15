@@ -1,0 +1,189 @@
+{
+  "$id": "content.preview.schema.json",
+  "title": "content, kind preview: a short trailer of a work that the source hosts, shown muted beside the work, never Play (docs §2.3)",
+  "type": "object",
+  "x-playable": [
+    "streams"
+  ],
+  "required": [
+    "id",
+    "kind",
+    "title",
+    "ids",
+    "updated_at",
+    "streams",
+    "license"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "ids": {
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/ids"
+        },
+        {
+          "anyOf": [
+            {
+              "required": [
+                "wikidata"
+              ]
+            },
+            {
+              "required": [
+                "imdb"
+              ]
+            },
+            {
+              "required": [
+                "tmdb"
+              ]
+            },
+            {
+              "required": [
+                "eidr"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/time"
+    },
+    "attribution": {
+      "$ref": "common.schema.json#/$defs/attribution"
+    },
+    "kind": {
+      "enum": [
+        "preview"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "year": {
+      "type": "integer",
+      "minimum": 1870,
+      "maximum": 2100
+    },
+    "title_id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "of": {
+      "enum": [
+        "trailer",
+        "teaser",
+        "clip"
+      ]
+    },
+    "duration": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 600
+    },
+    "window": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "$ref": "common.schema.json#/$defs/time"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "$ref": "common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "regions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 250,
+      "items": {
+        "$ref": "common.schema.json#/$defs/region"
+      }
+    },
+    "streams": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": [
+          "url",
+          "format"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "url": {
+            "type": "string",
+            "pattern": "^https://",
+            "maxLength": 2000
+          },
+          "format": {
+            "enum": [
+              "hls",
+              "mp4"
+            ]
+          },
+          "height": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "license": {
+      "type": "object",
+      "required": [
+        "code",
+        "name",
+        "source"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "promo",
+            "pd",
+            "cc0",
+            "cc-by",
+            "cc-by-sa"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "link": {
+          "$ref": "common.schema.json#/$defs/link"
+        },
+        "source": {
+          "$ref": "common.schema.json#/$defs/link"
+        },
+        "credit": {
+          "type": "string",
+          "maxLength": 300
+        }
+      }
+    },
+    "subcategories": {
+      "$ref": "common.schema.json#/$defs/subcategories"
+    }
+  }
+}

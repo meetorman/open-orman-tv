@@ -1,0 +1,153 @@
+{
+  "$id": "metadata.list.schema.json",
+  "title": "metadata, kind list: a ranked list of works or channels (trending, popular)",
+  "type": "object",
+  "required": [
+    "id",
+    "kind",
+    "updated_at",
+    "list",
+    "entries"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "ids": {
+      "$ref": "common.schema.json#/$defs/ids"
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/time"
+    },
+    "attribution": {
+      "$ref": "common.schema.json#/$defs/attribution"
+    },
+    "list": {
+      "$ref": "common.schema.json#/$defs/list_meta"
+    },
+    "entries": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "type": "object",
+        "required": [
+          "rank"
+        ],
+        "anyOf": [
+          {
+            "required": [
+              "title_id"
+            ]
+          },
+          {
+            "required": [
+              "channel_id"
+            ]
+          },
+          {
+            "required": [
+              "ids"
+            ]
+          }
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "title_id": {
+            "$ref": "common.schema.json#/$defs/item_id"
+          },
+          "ids": {
+            "$ref": "common.schema.json#/$defs/ids"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "score": {
+            "type": "number"
+          },
+          "channel_id": {
+            "$ref": "common.schema.json#/$defs/item_id"
+          },
+          "airing_id": {
+            "oneOf": [
+              {
+                "$ref": "common.schema.json#/$defs/item_id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "editorial": {
+            "description": "Why an editor put it on the list, as the list shows it (a featured reel's pick): badge, subtitle, a short description, the source the pick comes from, an event's start and end, and the words that find a live event",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "badge": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "subtitle": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 1000
+              },
+              "source": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "link"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "link": {
+                    "$ref": "common.schema.json#/$defs/link"
+                  }
+                }
+              },
+              "start": {
+                "$ref": "common.schema.json#/$defs/time"
+              },
+              "end": {
+                "$ref": "common.schema.json#/$defs/time"
+              },
+              "search_terms": {
+                "$ref": "common.schema.json#/$defs/strings"
+              },
+              "match_groups": {
+                "type": "array",
+                "maxItems": 10,
+                "items": {
+                  "$ref": "common.schema.json#/$defs/strings"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "kind": {
+      "enum": [
+        "list"
+      ]
+    },
+    "subcategories": {
+      "$ref": "common.schema.json#/$defs/subcategories"
+    }
+  }
+}

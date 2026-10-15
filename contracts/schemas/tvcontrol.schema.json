@@ -1,0 +1,13 @@
+{
+  "$id": "tvcontrol.schema.json",
+  "title": "tvcontrol v1: a member's TV controllers at a TV control provider (docs/tv-control-contract.md §7)",
+  "x-version": 1,
+  "x-ttl": 0,
+  "type": "object",
+  "required": [
+    "kind"
+  ],
+  "x-kinds": {
+    "controller": "tvcontrol.controller"
+  }
+}

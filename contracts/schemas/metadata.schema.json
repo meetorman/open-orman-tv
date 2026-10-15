@@ -1,0 +1,19 @@
+{
+  "$id": "metadata.schema.json",
+  "title": "metadata v1: an item's kind picks its shape",
+  "x-version": 1,
+  "x-ttl": 86400,
+  "type": "object",
+  "required": [
+    "kind"
+  ],
+  "x-kinds": {
+    "movie": "metadata.work",
+    "series": "metadata.work",
+    "season": "metadata.work",
+    "episode": "metadata.work",
+    "event": "metadata.work",
+    "list": "metadata.list",
+    "channel": "metadata.channel"
+  }
+}

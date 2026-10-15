@@ -1,0 +1,96 @@
+{
+  "$id": "availability.airing.schema.json",
+  "title": "availability, kind airing: a work on a channel entity (metadata channel_id) between start and end (the EPG)",
+  "type": "object",
+  "required": [
+    "id",
+    "kind",
+    "channel_id",
+    "start",
+    "end",
+    "title",
+    "updated_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "ids": {
+      "$ref": "common.schema.json#/$defs/ids"
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/time"
+    },
+    "attribution": {
+      "$ref": "common.schema.json#/$defs/attribution"
+    },
+    "channel_id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "start": {
+      "$ref": "common.schema.json#/$defs/time"
+    },
+    "end": {
+      "$ref": "common.schema.json#/$defs/time"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "episode_title": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "season": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "episode": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "series_ids": {
+      "$ref": "common.schema.json#/$defs/ids"
+    },
+    "new": {
+      "type": "boolean"
+    },
+    "live": {
+      "type": "boolean"
+    },
+    "rating": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "genres": {
+      "$ref": "common.schema.json#/$defs/strings"
+    },
+    "overview": {
+      "type": "string",
+      "maxLength": 5000
+    },
+    "open": {
+      "$ref": "common.schema.json#/$defs/open"
+    },
+    "kind": {
+      "enum": [
+        "airing"
+      ]
+    },
+    "subcategories": {
+      "$ref": "common.schema.json#/$defs/subcategories"
+    },
+    "work_id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "channel_name": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "series_id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    }
+  }
+}

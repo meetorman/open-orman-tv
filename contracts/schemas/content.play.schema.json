@@ -1,0 +1,257 @@
+{
+  "$id": "content.play.schema.json",
+  "title": "content, kind movie or episode: a service's work a member can play in the app, free and clearly licensed or the household's own (its subscription or its files) (docs \u00a72.3)",
+  "type": "object",
+  "x-playable": [
+    "streams"
+  ],
+  "required": [
+    "id",
+    "kind",
+    "title",
+    "service",
+    "updated_at",
+    "window",
+    "how",
+    "streams",
+    "license"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "ids": {
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/ids"
+        },
+        {
+          "anyOf": [
+            {
+              "required": [
+                "wikidata"
+              ]
+            },
+            {
+              "required": [
+                "imdb"
+              ]
+            },
+            {
+              "required": [
+                "tmdb"
+              ]
+            },
+            {
+              "required": [
+                "eidr"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "title_id": {
+      "$ref": "common.schema.json#/$defs/item_id",
+      "description": "The provider's own metadata work, when it has no strong id"
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/time"
+    },
+    "attribution": {
+      "$ref": "common.schema.json#/$defs/attribution"
+    },
+    "kind": {
+      "enum": [
+        "movie",
+        "episode"
+      ]
+    },
+    "service": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "year": {
+      "type": "integer",
+      "minimum": 1870,
+      "maximum": 2100
+    },
+    "duration": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "series_id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "series_ids": {
+      "$ref": "common.schema.json#/$defs/ids"
+    },
+    "season": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "episode": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "access": {
+      "enum": [
+        "free",
+        "subscription",
+        "own"
+      ]
+    },
+    "window": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "$ref": "common.schema.json#/$defs/time"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "$ref": "common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "how": {
+      "enum": [
+        "play"
+      ]
+    },
+    "regions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 250,
+      "items": {
+        "$ref": "common.schema.json#/$defs/region"
+      }
+    },
+    "streams": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": [
+          "url",
+          "format"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "url": {
+            "type": "string",
+            "pattern": "^https://",
+            "maxLength": 2000
+          },
+          "format": {
+            "enum": [
+              "hls",
+              "mp4"
+            ]
+          },
+          "height": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "license": {
+      "type": "object",
+      "required": [
+        "code",
+        "name",
+        "source"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "pd",
+            "cc0",
+            "cc-by",
+            "cc-by-sa",
+            "subscription",
+            "own"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "link": {
+          "$ref": "common.schema.json#/$defs/link"
+        },
+        "source": {
+          "$ref": "common.schema.json#/$defs/link"
+        },
+        "credit": {
+          "type": "string",
+          "maxLength": 300
+        }
+      }
+    },
+    "subcategories": {
+      "$ref": "common.schema.json#/$defs/subcategories"
+    },
+    "previews": {
+      "description": "Stretches of the item's own stream worth showing before Play (a trailer): from start, for duration seconds (docs \u00a72.3)",
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "start",
+          "duration"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "start": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "duration": {
+            "type": "integer",
+            "minimum": 5,
+            "maximum": 600
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          }
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "required": [
+        "ids"
+      ]
+    },
+    {
+      "required": [
+        "title_id"
+      ]
+    }
+  ]
+}

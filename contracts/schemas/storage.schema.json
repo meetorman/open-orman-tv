@@ -1,0 +1,13 @@
+{
+  "$id": "storage.schema.json",
+  "title": "storage v1: a member's documents, shared by every client on the account (docs/contract/)",
+  "x-version": 1,
+  "x-ttl": 0,
+  "type": "object",
+  "required": [
+    "kind"
+  ],
+  "x-kinds": {
+    "document": "storage.document"
+  }
+}

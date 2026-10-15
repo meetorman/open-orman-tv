@@ -1,0 +1,15 @@
+{
+  "$id": "availability.schema.json",
+  "title": "availability v1: an item's kind picks its shape",
+  "x-version": 1,
+  "x-ttl": 14400,
+  "type": "object",
+  "required": [
+    "kind"
+  ],
+  "x-kinds": {
+    "offer": "availability.offer",
+    "channel": "availability.channel",
+    "airing": "availability.airing"
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "$id": "reminders.reminder.schema.json",
+  "title": "reminders, kind reminder: remind one member of one airing (docs/provider-contracts.md \u00a72.6)",
+  "type": "object",
+  "required": [
+    "id",
+    "kind",
+    "program_id",
+    "channel_id",
+    "start",
+    "lead",
+    "fire_at",
+    "state",
+    "updated_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "kind": {
+      "enum": [
+        "reminder"
+      ]
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/time"
+    },
+    "created_at": {
+      "$ref": "common.schema.json#/$defs/time"
+    },
+    "program_id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "series_id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "airing_id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "channel_id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "start": {
+      "$ref": "common.schema.json#/$defs/time"
+    },
+    "end": {
+      "$ref": "common.schema.json#/$defs/time"
+    },
+    "lead": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 86400
+    },
+    "fire_at": {
+      "$ref": "common.schema.json#/$defs/time"
+    },
+    "state": {
+      "enum": [
+        "set",
+        "fired"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "episode_title": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "channel_name": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "delivered": {
+      "enum": [
+        "live",
+        "push",
+        "held",
+        "off"
+      ]
+    }
+  }
+}

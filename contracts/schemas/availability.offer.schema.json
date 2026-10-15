@@ -1,0 +1,105 @@
+{
+  "$id": "availability.offer.schema.json",
+  "title": "availability, kind offer: a work on a service, in a time window",
+  "type": "object",
+  "required": [
+    "id",
+    "kind",
+    "updated_at",
+    "service",
+    "service_name",
+    "region",
+    "access"
+  ],
+  "anyOf": [
+    {
+      "required": [
+        "title_id"
+      ]
+    },
+    {
+      "required": [
+        "ids"
+      ]
+    }
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "kind": {
+      "enum": [
+        "offer"
+      ]
+    },
+    "ids": {
+      "$ref": "common.schema.json#/$defs/ids"
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/time"
+    },
+    "attribution": {
+      "$ref": "common.schema.json#/$defs/attribution"
+    },
+    "subcategories": {
+      "$ref": "common.schema.json#/$defs/subcategories"
+    },
+    "title_id": {
+      "$ref": "common.schema.json#/$defs/item_id"
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "window": {
+      "$ref": "common.schema.json#/$defs/window"
+    },
+    "service": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+    },
+    "service_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "region": {
+      "$ref": "common.schema.json#/$defs/region"
+    },
+    "access": {
+      "enum": [
+        "subscription",
+        "free",
+        "ads",
+        "rent",
+        "buy",
+        "own"
+      ]
+    },
+    "open": {
+      "$ref": "common.schema.json#/$defs/open"
+    },
+    "exact": {
+      "type": "boolean"
+    },
+    "app": {
+      "type": "object",
+      "required": [
+        "bundle_id"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "bundle_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "app_store_id": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    }
+  }
+}

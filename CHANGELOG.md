@@ -4,6 +4,8 @@ One line per change to the contract. Newest first. Format: `date  type.kind or s
 
 ## Unreleased
 
+## v1.1.2 (2026-10-15)
+
 ## v1.1.1 (2026-10-15)
 
 - 2026-10-14  kit  `conform --providers` and `serve --providers` / `"providers": ["my_providers.films"]`: providers kept outside the package, by dotted module path; their test and fixture live beside the module
